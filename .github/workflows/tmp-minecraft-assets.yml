@@ -1,66 +1,8 @@
 name: Temporary Minecraft Asset Collector
-
 on:
-  pull_request:
-    branches:
-      - main
-
-permissions:
-  contents: read
-
+  workflow_dispatch:
 jobs:
-  collect:
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - name: Search Ocean Ruins files
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          import json, urllib.parse, urllib.request, pathlib
-          API='https://minecraft.wiki/api.php'; UA='ChatGPT-Minecraft-Quiz-QA/1.0'
-          out=pathlib.Path('assets'); out.mkdir(exist_ok=True)
-          def api(p):
-              u=API+'?'+urllib.parse.urlencode(p); req=urllib.request.Request(u,headers={'User-Agent':UA})
-              with urllib.request.urlopen(req,timeout=40) as r: return json.load(r)
-          seen={}; prefixes=['Ocean Ruin','Ocean ruin','Warm Ocean','Warm ocean','Cold Ocean','Cold ocean']
-          for pref in prefixes:
-              cont={}
-              for _ in range(4):
-                  p={'action':'query','format':'json','list':'allimages','ailimit':'100','aiprefix':pref,'aiprop':'url|mime|size'}; p.update(cont)
-                  j=api(p)
-                  for i in j.get('query',{}).get('allimages',[]):
-                      seen[i.get('name','')]=i
-                  if 'continue' not in j: break
-                  cont=j['continue']
-          candidates=[]
-          for name,i in seen.items():
-              n=name.lower(); w=i.get('width',0); h=i.get('height',0); mime=i.get('mime','')
-              if 'ruin' not in n or mime not in ('image/png','image/jpeg','image/webp') or w<300 or h<180: continue
-              s=(w*h)**0.5/30
-              for k in ('ocean ruin','warm ruin','cold ruin','underwater','screenshot','generated'): 
-                  if k in n: s+=20
-              for k in ('sprite','icon','map','blueprint','layer','structure'): 
-                  if k in n: s-=35
-              candidates.append((s,i))
-          candidates.sort(key=lambda x:x[0],reverse=True)
-          meta=[]; rank=0
-          for sc,i in candidates[:20]:
-              try:
-                  req=urllib.request.Request(i['url'],headers={'User-Agent':UA,'Referer':'https://minecraft.wiki/'})
-                  with urllib.request.urlopen(req,timeout=60) as r: data=r.read(); ct=r.headers.get_content_type()
-                  ext={'image/png':'png','image/jpeg':'jpg','image/webp':'webp'}.get(ct)
-                  if not ext: continue
-                  rank+=1; fn=f'{rank:02d}.{ext}'; (out/fn).write_bytes(data)
-                  meta.append({'rank':rank,'score':sc,'filename':fn,'wiki_file_title':i['name'],'image_url':i['url'],'width':i.get('width'),'height':i.get('height')})
-              except Exception: pass
-          (out/'metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
-          print('candidates',len(meta),[x['wiki_file_title'] for x in meta[:10]])
-          PY
-      - name: Upload Ocean Ruins search results
-        uses: actions/upload-artifact@v4
-        with:
-          name: minecraft-ocean-ruins-search-v2
-          path: assets/
-          if-no-files-found: error
-          compression-level: 6
-          retention-days: 1
+      - run: echo cleanup
