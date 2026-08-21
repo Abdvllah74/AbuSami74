@@ -1,0 +1,106 @@
+name: Temporary Minecraft Asset Collector
+
+on:
+  push:
+    branches:
+      - tmp-minecraft-quiz-v2-20260822
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect Minecraft Wiki page images
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, re, time, urllib.parse, urllib.request, pathlib, mimetypes
+
+          topics = [
+            # EASY 001-040
+            ("EASY",1,"Creeper","mob"),("EASY",2,"Zombie","mob"),("EASY",3,"Skeleton","mob"),("EASY",4,"Enderman","mob"),("EASY",5,"Villager","mob"),("EASY",6,"Iron Golem","mob"),("EASY",7,"Sheep","animal"),("EASY",8,"Cow","animal"),("EASY",9,"Pig","animal"),("EASY",10,"Chicken","animal"),("EASY",11,"Wolf","animal"),("EASY",12,"Cat","animal"),("EASY",13,"Bee","animal"),("EASY",14,"Horse","animal"),("EASY",15,"Camel","animal"),("EASY",16,"Axolotl","animal"),("EASY",17,"Diamond","item"),("EASY",18,"Crafting Table","block"),("EASY",19,"Furnace","block"),("EASY",20,"Chest","block"),("EASY",21,"Bed","block"),("EASY",22,"Torch","block"),("EASY",23,"TNT","block"),("EASY",24,"Nether Portal","mechanic"),("EASY",25,"Village","structure"),("EASY",26,"Desert Pyramid","structure"),("EASY",27,"Ocean Monument","structure"),("EASY",28,"Stronghold","structure"),("EASY",29,"Nether Fortress","structure"),("EASY",30,"Bastion Remnant","structure"),("EASY",31,"Overworld","dimension"),("EASY",32,"Nether","dimension"),("EASY",33,"The End","dimension"),("EASY",34,"Plains","biome"),("EASY",35,"Desert","biome"),("EASY",36,"Cherry Grove","biome"),("EASY",37,"Survival","game_mode"),("EASY",38,"Creative","game_mode"),("EASY",39,"Steve","skin"),("EASY",40,"Alex","skin"),
+            # MEDIUM 001-040
+            ("MEDIUM",1,"Warden","mob"),("MEDIUM",2,"Blaze","mob"),("MEDIUM",3,"Ghast","mob"),("MEDIUM",4,"Piglin","mob"),("MEDIUM",5,"Hoglin","mob"),("MEDIUM",6,"Shulker","mob"),("MEDIUM",7,"Guardian","mob"),("MEDIUM",8,"Elder Guardian","mob"),("MEDIUM",9,"Drowned","mob"),("MEDIUM",10,"Phantom","mob"),("MEDIUM",11,"Allay","mob"),("MEDIUM",12,"Sniffer","mob"),("MEDIUM",13,"Armadillo","animal"),("MEDIUM",14,"Goat","animal"),("MEDIUM",15,"Fox","animal"),("MEDIUM",16,"Panda","animal"),("MEDIUM",17,"Llama","animal"),("MEDIUM",18,"Turtle","animal"),("MEDIUM",19,"Dolphin","animal"),("MEDIUM",20,"Frog","animal"),("MEDIUM",21,"Elytra","item"),("MEDIUM",22,"Totem of Undying","item"),("MEDIUM",23,"Trident","item"),("MEDIUM",24,"Enchanting Table","block"),("MEDIUM",25,"Brewing Stand","block"),("MEDIUM",26,"Beacon","block"),("MEDIUM",27,"Redstone Repeater","redstone"),("MEDIUM",28,"Piston","redstone"),("MEDIUM",29,"Hopper","redstone"),("MEDIUM",30,"Observer","redstone"),("MEDIUM",31,"Lush Caves","biome"),("MEDIUM",32,"Dripstone Caves","biome"),("MEDIUM",33,"Deep Dark","biome"),("MEDIUM",34,"Mangrove Swamp","biome"),("MEDIUM",35,"Mushroom Fields","biome"),("MEDIUM",36,"Woodland Mansion","structure"),("MEDIUM",37,"Pillager Outpost","structure"),("MEDIUM",38,"Ancient City","structure"),("MEDIUM",39,"Trial Chambers","structure"),("MEDIUM",40,"Mineshaft","structure"),
+            # HARD 001-040
+            ("HARD",1,"Evoker","mob"),("HARD",2,"Vindicator","mob"),("HARD",3,"Ravager","mob"),("HARD",4,"Stray","mob"),("HARD",5,"Husk","mob"),("HARD",6,"Silverfish","mob"),("HARD",7,"Endermite","mob"),("HARD",8,"Magma Cube","mob"),("HARD",9,"Piglin Brute","mob"),("HARD",10,"Zoglin","mob"),("HARD",11,"Bogged","mob"),("HARD",12,"Breeze","mob"),("HARD",13,"Wither Skeleton","mob"),("HARD",14,"Skeleton Horse","mob"),("HARD",15,"Mooshroom","animal"),("HARD",16,"Glow Squid","animal"),("HARD",17,"Ender Dragon","boss"),("HARD",18,"Wither","boss"),("HARD",19,"End Crystal","block"),("HARD",20,"Sculk Shrieker","block"),("HARD",21,"Sculk Catalyst","block"),("HARD",22,"Respawn Anchor","block"),("HARD",23,"Lodestone","block"),("HARD",24,"Recovery Compass","item"),("HARD",25,"Conduit","block"),("HARD",26,"Heart of the Sea","item"),("HARD",27,"Ominous Trial Key","item"),("HARD",28,"Heavy Core","item"),("HARD",29,"Mace","item"),("HARD",30,"Wind Charge","item"),("HARD",31,"End City","structure"),("HARD",32,"Shipwreck","structure"),("HARD",33,"Ocean Ruins","structure"),("HARD",34,"Trail Ruins","structure"),("HARD",35,"Jungle Pyramid","structure"),("HARD",36,"Igloo","structure"),("HARD",37,"Ruined Portal","structure"),("HARD",38,"Nether Fossil","structure"),("HARD",39,"Amethyst Geode","structure"),("HARD",40,"Ancient Debris","block")
+          ]
+
+          API = "https://minecraft.wiki/api.php"
+          UA = "ChatGPT-Minecraft-Quiz-Asset-Collector/1.0 (personal quiz build)"
+          out = pathlib.Path("assets")
+          out.mkdir(exist_ok=True)
+          meta=[]
+
+          def get_json(params):
+              url=API+"?"+urllib.parse.urlencode(params)
+              req=urllib.request.Request(url, headers={"User-Agent":UA,"Accept":"application/json"})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.load(r)
+
+          def choose_fallback_image(title):
+              j=get_json({"action":"query","format":"json","redirects":"1","prop":"images","imlimit":"50","titles":title})
+              page=next(iter(j.get("query",{}).get("pages",{}).values()),{})
+              names=[x.get("title","") for x in page.get("images",[])]
+              bad=("Icon","GUI","Invicon","Sprite","Logo","JE","BE","Achievement","Advancement","Map icon","Heart","Hunger","Experience")
+              names=[n for n in names if not any(b.lower() in n.lower() for b in bad)]
+              if not names: return None
+              # Prefer screenshot/render-like names, otherwise first candidate.
+              pref=[n for n in names if any(k in n.lower() for k in ("screenshot","render","appearance","view","structure","biome","natural"))]
+              return (pref or names)[0]
+
+          for level,num,title,cat in topics:
+              code=f"MC-{level}-{num:03d}"
+              rec={"code":code,"level":level,"number":num,"title":title,"category":cat,"status":"pending"}
+              try:
+                  j=get_json({"action":"query","format":"json","redirects":"1","prop":"pageimages","piprop":"original|name","pithumbsize":"1600","titles":title})
+                  page=next(iter(j.get("query",{}).get("pages",{}).values()),{})
+                  rec["resolved_title"]=page.get("title",title)
+                  orig=page.get("original") or {}
+                  image_url=orig.get("source")
+                  file_title=page.get("pageimage")
+                  if not image_url:
+                      ft=choose_fallback_image(rec["resolved_title"])
+                      if ft:
+                          file_title=ft.replace("File:","")
+                          jj=get_json({"action":"query","format":"json","prop":"imageinfo","iiprop":"url|mime|size","titles":ft})
+                          fp=next(iter(jj.get("query",{}).get("pages",{}).values()),{})
+                          ii=(fp.get("imageinfo") or [{}])[0]
+                          image_url=ii.get("url")
+                          rec["image_mime"]=ii.get("mime")
+                  if not image_url:
+                      raise RuntimeError("No suitable page image found")
+                  rec["wiki_page_url"]="https://minecraft.wiki/w/"+urllib.parse.quote(rec["resolved_title"].replace(" ","_"), safe="()_'-")
+                  rec["wiki_file_title"]=file_title
+                  rec["image_url"]=image_url
+                  # Download the exact original selected by the wiki API.
+                  req=urllib.request.Request(image_url, headers={"User-Agent":UA,"Referer":rec["wiki_page_url"]})
+                  with urllib.request.urlopen(req, timeout=60) as r:
+                      data=r.read()
+                      ctype=r.headers.get_content_type()
+                  ext=pathlib.Path(urllib.parse.urlparse(image_url).path).suffix.lower()
+                  if ext not in (".png",".jpg",".jpeg",".webp",".gif",".svg"):
+                      ext=mimetypes.guess_extension(ctype) or ".img"
+                  fname=f"{code}{ext}"
+                  (out/fname).write_bytes(data)
+                  rec.update({"status":"downloaded","filename":fname,"bytes":len(data),"content_type":ctype})
+              except Exception as e:
+                  rec["status"]="error"; rec["error"]=repr(e)
+              meta.append(rec)
+              print(code,title,rec["status"],rec.get("filename",rec.get("error","")))
+              time.sleep(0.08)
+
+          (out/"metadata.json").write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding="utf-8")
+          ok=sum(x["status"]=="downloaded" for x in meta)
+          print(f"Downloaded {ok}/{len(meta)} assets")
+          PY
+
+      - name: Upload collected assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: minecraft-wiki-assets-v2
+          path: assets/
+          if-no-files-found: error
+          compression-level: 6
+          retention-days: 1
