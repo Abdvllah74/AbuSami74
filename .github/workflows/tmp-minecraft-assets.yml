@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - tmp-minecraft-quiz-v2-20260822
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -46,7 +49,6 @@ jobs:
               bad=("Icon","GUI","Invicon","Sprite","Logo","JE","BE","Achievement","Advancement","Map icon","Heart","Hunger","Experience")
               names=[n for n in names if not any(b.lower() in n.lower() for b in bad)]
               if not names: return None
-              # Prefer screenshot/render-like names, otherwise first candidate.
               pref=[n for n in names if any(k in n.lower() for k in ("screenshot","render","appearance","view","structure","biome","natural"))]
               return (pref or names)[0]
 
@@ -74,7 +76,6 @@ jobs:
                   rec["wiki_page_url"]="https://minecraft.wiki/w/"+urllib.parse.quote(rec["resolved_title"].replace(" ","_"), safe="()_'-")
                   rec["wiki_file_title"]=file_title
                   rec["image_url"]=image_url
-                  # Download the exact original selected by the wiki API.
                   req=urllib.request.Request(image_url, headers={"User-Agent":UA,"Referer":rec["wiki_page_url"]})
                   with urllib.request.urlopen(req, timeout=60) as r:
                       data=r.read()
