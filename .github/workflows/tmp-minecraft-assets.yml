@@ -12,7 +12,7 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     steps:
-      - name: Collect Ocean Ruins candidates
+      - name: Search Ocean Ruins files
         shell: bash
         run: |
           python3 - <<'PY'
@@ -22,50 +22,44 @@ jobs:
           def api(p):
               u=API+'?'+urllib.parse.urlencode(p); req=urllib.request.Request(u,headers={'User-Agent':UA})
               with urllib.request.urlopen(req,timeout=40) as r: return json.load(r)
-          names=[]
-          for title in ['Ocean Ruins','Ocean Ruins/Structure']:
+          seen={}; prefixes=['Ocean Ruin','Ocean ruin','Warm Ocean','Warm ocean','Cold Ocean','Cold ocean']
+          for pref in prefixes:
               cont={}
-              for _ in range(5):
-                  p={'action':'query','format':'json','prop':'images','imlimit':'100','titles':title}; p.update(cont)
-                  j=api(p); page=next(iter(j.get('query',{}).get('pages',{}).values()),{})
-                  names += [x.get('title','') for x in page.get('images',[])]
+              for _ in range(4):
+                  p={'action':'query','format':'json','list':'allimages','ailimit':'100','aiprefix':pref,'aiprop':'url|mime|size'}; p.update(cont)
+                  j=api(p)
+                  for i in j.get('query',{}).get('allimages',[]):
+                      seen[i.get('name','')]=i
                   if 'continue' not in j: break
                   cont=j['continue']
-          names=list(dict.fromkeys(names))
-          infos=[]
-          for i in range(0,len(names),25):
-              j=api({'action':'query','format':'json','prop':'imageinfo','iiprop':'url|mime|size','titles':'|'.join(names[i:i+25])})
-              for p in j.get('query',{}).get('pages',{}).values():
-                  ii=(p.get('imageinfo') or [{}])[0]
-                  if ii.get('url'): infos.append({'title':p.get('title',''),**ii})
-          def score(i):
-              n=i['title'].lower(); w=i.get('width',0); h=i.get('height',0)
-              if i.get('mime') not in ('image/png','image/jpeg','image/webp') or w<150 or h<120: return -999
-              s=(w*h)**0.5/40
-              for k in ('ocean','ruin','warm','cold','underwater','screenshot','generated','structure'): 
-                  if k in n: s+=15
-              for k in ('sprite','icon','logo','map','blueprint','layer','invicon','blocksprite','itemsprite'):
-                  if k in n: s-=45
-              return s
-          ranked=sorted([(score(i),i) for i in infos],key=lambda x:x[0],reverse=True)
+          candidates=[]
+          for name,i in seen.items():
+              n=name.lower(); w=i.get('width',0); h=i.get('height',0); mime=i.get('mime','')
+              if 'ruin' not in n or mime not in ('image/png','image/jpeg','image/webp') or w<300 or h<180: continue
+              s=(w*h)**0.5/30
+              for k in ('ocean ruin','warm ruin','cold ruin','underwater','screenshot','generated'): 
+                  if k in n: s+=20
+              for k in ('sprite','icon','map','blueprint','layer','structure'): 
+                  if k in n: s-=35
+              candidates.append((s,i))
+          candidates.sort(key=lambda x:x[0],reverse=True)
           meta=[]; rank=0
-          for sc,i in ranked:
-              if sc<=0 or rank>=20: continue
+          for sc,i in candidates[:20]:
               try:
                   req=urllib.request.Request(i['url'],headers={'User-Agent':UA,'Referer':'https://minecraft.wiki/'})
                   with urllib.request.urlopen(req,timeout=60) as r: data=r.read(); ct=r.headers.get_content_type()
                   ext={'image/png':'png','image/jpeg':'jpg','image/webp':'webp'}.get(ct)
                   if not ext: continue
                   rank+=1; fn=f'{rank:02d}.{ext}'; (out/fn).write_bytes(data)
-                  meta.append({'rank':rank,'score':sc,'filename':fn,'wiki_file_title':i['title'].replace('File:',''),'image_url':i['url'],'width':i.get('width'),'height':i.get('height')})
+                  meta.append({'rank':rank,'score':sc,'filename':fn,'wiki_file_title':i['name'],'image_url':i['url'],'width':i.get('width'),'height':i.get('height')})
               except Exception: pass
           (out/'metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
-          print('downloaded',len(meta),'candidates from',len(names),'file references')
+          print('candidates',len(meta),[x['wiki_file_title'] for x in meta[:10]])
           PY
-      - name: Upload Ocean Ruins candidates
+      - name: Upload Ocean Ruins search results
         uses: actions/upload-artifact@v4
         with:
-          name: minecraft-ocean-ruins-candidates-v2
+          name: minecraft-ocean-ruins-search-v2
           path: assets/
           if-no-files-found: error
           compression-level: 6
