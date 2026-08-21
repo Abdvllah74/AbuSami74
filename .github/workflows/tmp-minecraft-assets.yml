@@ -12,69 +12,60 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     steps:
-      - name: Collect QA candidates from Minecraft Wiki
+      - name: Collect Ocean Ruins candidates
         shell: bash
         run: |
           python3 - <<'PY'
-          import json, urllib.parse, urllib.request, pathlib, time, re
-          pages=[
-            ("MC-EASY-027","Ocean Monument"),("MC-EASY-030","Bastion Remnant"),
-            ("MC-MEDIUM-038","Ancient City"),("MC-HARD-033","Ocean Ruins"),
-            ("MC-HARD-036","Igloo"),("MC-HARD-038","Nether Fossil")
-          ]
-          API="https://minecraft.wiki/api.php"; UA="ChatGPT-Minecraft-Quiz-QA/1.0"
-          out=pathlib.Path("assets"); out.mkdir(exist_ok=True)
-          meta=[]
+          import json, urllib.parse, urllib.request, pathlib
+          API='https://minecraft.wiki/api.php'; UA='ChatGPT-Minecraft-Quiz-QA/1.0'
+          out=pathlib.Path('assets'); out.mkdir(exist_ok=True)
           def api(p):
-              u=API+"?"+urllib.parse.urlencode(p); req=urllib.request.Request(u,headers={"User-Agent":UA})
+              u=API+'?'+urllib.parse.urlencode(p); req=urllib.request.Request(u,headers={'User-Agent':UA})
               with urllib.request.urlopen(req,timeout=40) as r: return json.load(r)
-          def all_images(title):
-              names=[]; cont={}
-              for _ in range(4):
-                  p={"action":"query","format":"json","redirects":"1","prop":"images","imlimit":"100","titles":title}; p.update(cont)
-                  j=api(p); page=next(iter(j.get("query",{}).get("pages",{}).values()),{})
-                  names += [x.get("title","") for x in page.get("images",[])]
-                  if "continue" not in j: break
-                  cont=j["continue"]
-              return names
-          def infos(names):
-              ret=[]
-              for i in range(0,len(names),25):
-                  j=api({"action":"query","format":"json","prop":"imageinfo","iiprop":"url|mime|size","titles":"|".join(names[i:i+25])})
-                  for p in j.get("query",{}).get("pages",{}).values():
-                      ii=(p.get("imageinfo") or [{}])[0]
-                      if ii.get("url"): ret.append({"title":p.get("title",""),**ii})
-              return ret
+          names=[]
+          for title in ['Ocean Ruins','Ocean Ruins/Structure']:
+              cont={}
+              for _ in range(5):
+                  p={'action':'query','format':'json','prop':'images','imlimit':'100','titles':title}; p.update(cont)
+                  j=api(p); page=next(iter(j.get('query',{}).get('pages',{}).values()),{})
+                  names += [x.get('title','') for x in page.get('images',[])]
+                  if 'continue' not in j: break
+                  cont=j['continue']
+          names=list(dict.fromkeys(names))
+          infos=[]
+          for i in range(0,len(names),25):
+              j=api({'action':'query','format':'json','prop':'imageinfo','iiprop':'url|mime|size','titles':'|'.join(names[i:i+25])})
+              for p in j.get('query',{}).get('pages',{}).values():
+                  ii=(p.get('imageinfo') or [{}])[0]
+                  if ii.get('url'): infos.append({'title':p.get('title',''),**ii})
           def score(i):
-              n=i["title"].lower(); w=i.get("width",0); h=i.get("height",0); ar=(w/h if h else 0)
-              if i.get("mime") not in ("image/png","image/jpeg","image/webp") or w<500 or h<280: return -999
-              s=(min(w,2000)/100)+(20 if 1.2<=ar<=2.2 else 0)
-              for k in ("screenshot","view","generated","natural","inside","outside","entrance","exterior","interior","ruin","bastion","monument","city","igloo","fossil"): 
-                  if k in n: s+=12
-              for k in ("sprite","icon","logo","map","layout","blueprint","concept","texture","invicon","block je","block be","item je","item be"):
-                  if k in n: s-=40
+              n=i['title'].lower(); w=i.get('width',0); h=i.get('height',0)
+              if i.get('mime') not in ('image/png','image/jpeg','image/webp') or w<150 or h<120: return -999
+              s=(w*h)**0.5/40
+              for k in ('ocean','ruin','warm','cold','underwater','screenshot','generated','structure'): 
+                  if k in n: s+=15
+              for k in ('sprite','icon','logo','map','blueprint','layer','invicon','blocksprite','itemsprite'):
+                  if k in n: s-=45
               return s
-          for code,title in pages:
-              folder=out/code; folder.mkdir(exist_ok=True)
-              ranked=sorted([(score(i),i) for i in infos(all_images(title))],key=lambda x:x[0],reverse=True)
-              kept=[]
-              for rank,(sc,i) in enumerate([x for x in ranked if x[0]>0][:12],1):
-                  try:
-                      req=urllib.request.Request(i["url"],headers={"User-Agent":UA,"Referer":"https://minecraft.wiki/"})
-                      with urllib.request.urlopen(req,timeout=60) as r: data=r.read(); ct=r.headers.get_content_type()
-                      ext={"image/png":"png","image/jpeg":"jpg","image/webp":"webp"}.get(ct,"img")
-                      fname=f"{rank:02d}.{ext}"; (folder/fname).write_bytes(data)
-                      kept.append({"rank":rank,"score":sc,"filename":f"{code}/{fname}","wiki_file_title":i["title"].replace("File:",""),"image_url":i["url"],"width":i.get("width"),"height":i.get("height")})
-                  except Exception as e: pass
-              meta.append({"code":code,"title":title,"candidates":kept})
-              print(code,title,len(kept))
-              time.sleep(.1)
-          (out/"metadata.json").write_text(json.dumps(meta,indent=2,ensure_ascii=False),encoding="utf-8")
+          ranked=sorted([(score(i),i) for i in infos],key=lambda x:x[0],reverse=True)
+          meta=[]; rank=0
+          for sc,i in ranked:
+              if sc<=0 or rank>=20: continue
+              try:
+                  req=urllib.request.Request(i['url'],headers={'User-Agent':UA,'Referer':'https://minecraft.wiki/'})
+                  with urllib.request.urlopen(req,timeout=60) as r: data=r.read(); ct=r.headers.get_content_type()
+                  ext={'image/png':'png','image/jpeg':'jpg','image/webp':'webp'}.get(ct)
+                  if not ext: continue
+                  rank+=1; fn=f'{rank:02d}.{ext}'; (out/fn).write_bytes(data)
+                  meta.append({'rank':rank,'score':sc,'filename':fn,'wiki_file_title':i['title'].replace('File:',''),'image_url':i['url'],'width':i.get('width'),'height':i.get('height')})
+              except Exception: pass
+          (out/'metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('downloaded',len(meta),'candidates from',len(names),'file references')
           PY
-      - name: Upload QA candidates
+      - name: Upload Ocean Ruins candidates
         uses: actions/upload-artifact@v4
         with:
-          name: minecraft-qa-candidates-v2
+          name: minecraft-ocean-ruins-candidates-v2
           path: assets/
           if-no-files-found: error
           compression-level: 6
