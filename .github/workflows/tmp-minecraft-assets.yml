@@ -12,103 +12,69 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     steps:
-      - name: Collect scene-focused Minecraft Wiki images
+      - name: Collect QA candidates from Minecraft Wiki
         shell: bash
         run: |
           python3 - <<'PY'
-          import json, time, urllib.parse, urllib.request, pathlib, mimetypes, re
-
-          topics = [
-            ("MC-EASY-024","Nether Portal","mechanic"),("MC-EASY-025","Village","structure"),("MC-EASY-026","Desert Pyramid","structure"),("MC-EASY-027","Ocean Monument","structure"),("MC-EASY-028","Stronghold","structure"),("MC-EASY-029","Nether Fortress","structure"),("MC-EASY-030","Bastion Remnant","structure"),("MC-EASY-031","Overworld","dimension"),("MC-EASY-032","Nether","dimension"),("MC-EASY-033","The End","dimension"),("MC-EASY-034","Plains","biome"),("MC-EASY-035","Desert","biome"),("MC-EASY-036","Cherry Grove","biome"),("MC-EASY-037","Survival","game_mode"),("MC-EASY-038","Creative","game_mode"),
-            ("MC-MEDIUM-031","Lush Caves","biome"),("MC-MEDIUM-032","Dripstone Caves","biome"),("MC-MEDIUM-033","Deep Dark","biome"),("MC-MEDIUM-034","Mangrove Swamp","biome"),("MC-MEDIUM-035","Mushroom Fields","biome"),("MC-MEDIUM-036","Woodland Mansion","structure"),("MC-MEDIUM-037","Pillager Outpost","structure"),("MC-MEDIUM-038","Ancient City","structure"),("MC-MEDIUM-039","Trial Chambers","structure"),("MC-MEDIUM-040","Mineshaft","structure"),
-            ("MC-HARD-031","End City","structure"),("MC-HARD-032","Shipwreck","structure"),("MC-HARD-033","Ocean Ruins","structure"),("MC-HARD-034","Trail Ruins","structure"),("MC-HARD-035","Jungle Pyramid","structure"),("MC-HARD-036","Igloo","structure"),("MC-HARD-037","Ruined Portal","structure"),("MC-HARD-038","Nether Fossil","structure"),("MC-HARD-039","Amethyst Geode","structure")
+          import json, urllib.parse, urllib.request, pathlib, time, re
+          pages=[
+            ("MC-EASY-027","Ocean Monument"),("MC-EASY-030","Bastion Remnant"),
+            ("MC-MEDIUM-038","Ancient City"),("MC-HARD-033","Ocean Ruins"),
+            ("MC-HARD-036","Igloo"),("MC-HARD-038","Nether Fossil")
           ]
-          API="https://minecraft.wiki/api.php"
-          UA="ChatGPT-Minecraft-Quiz-Scene-Collector/1.0 (personal quiz build)"
+          API="https://minecraft.wiki/api.php"; UA="ChatGPT-Minecraft-Quiz-QA/1.0"
           out=pathlib.Path("assets"); out.mkdir(exist_ok=True)
           meta=[]
-
-          def api(params):
-              url=API+"?"+urllib.parse.urlencode(params)
-              req=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"application/json"})
+          def api(p):
+              u=API+"?"+urllib.parse.urlencode(p); req=urllib.request.Request(u,headers={"User-Agent":UA})
               with urllib.request.urlopen(req,timeout=40) as r: return json.load(r)
-
-          def list_images(title):
+          def all_images(title):
               names=[]; cont={}
-              for _ in range(3):
+              for _ in range(4):
                   p={"action":"query","format":"json","redirects":"1","prop":"images","imlimit":"100","titles":title}; p.update(cont)
                   j=api(p); page=next(iter(j.get("query",{}).get("pages",{}).values()),{})
-                  names.extend(x.get("title","") for x in page.get("images",[]))
+                  names += [x.get("title","") for x in page.get("images",[])]
                   if "continue" not in j: break
                   cont=j["continue"]
-              return names[:180]
-
-          def info_batch(names):
-              result=[]
+              return names
+          def infos(names):
+              ret=[]
               for i in range(0,len(names),25):
-                  chunk=names[i:i+25]
-                  j=api({"action":"query","format":"json","prop":"imageinfo","iiprop":"url|mime|size","titles":"|".join(chunk)})
+                  j=api({"action":"query","format":"json","prop":"imageinfo","iiprop":"url|mime|size","titles":"|".join(names[i:i+25])})
                   for p in j.get("query",{}).get("pages",{}).values():
                       ii=(p.get("imageinfo") or [{}])[0]
-                      if ii.get("url"):
-                          result.append({"title":p.get("title",""),**ii})
-              return result
-
-          def score(info,cat):
-              name=info["title"].lower(); w=info.get("width",0); h=info.get("height",0); mime=info.get("mime","")
-              if not w or not h: return -9999
-              ar=w/h
-              s=0
-              if mime in ("image/jpeg","image/png","image/webp"): s+=10
-              if w>=1000: s+=25
-              elif w>=700: s+=18
-              elif w>=500: s+=8
-              if h>=400: s+=8
-              if 1.25<=ar<=2.2: s+=25
-              elif 1.05<=ar<=2.6: s+=10
-              good=("screenshot","view","exterior","entrance","inside","interior","natural","generated","terrain","biome","landscape","room","hall","corridor","surface","overworld","nether","end")
-              bad=("icon","sprite","invicon","logo","map","layout","schematic","blueprint","render","isometric","model","structure jigsaw","gallery","comparison","concept","texture","block je","block be","item je","item be","edition")
-              for k in good:
-                  if k in name: s+=20
-              for k in bad:
-                  if k in name: s-=35
-              if name.endswith(".svg"): s-=100
-              if cat=="game_mode" and ("hud" in name or "inventory" in name or "creative" in name or "survival" in name): s+=25
+                      if ii.get("url"): ret.append({"title":p.get("title",""),**ii})
+              return ret
+          def score(i):
+              n=i["title"].lower(); w=i.get("width",0); h=i.get("height",0); ar=(w/h if h else 0)
+              if i.get("mime") not in ("image/png","image/jpeg","image/webp") or w<500 or h<280: return -999
+              s=(min(w,2000)/100)+(20 if 1.2<=ar<=2.2 else 0)
+              for k in ("screenshot","view","generated","natural","inside","outside","entrance","exterior","interior","ruin","bastion","monument","city","igloo","fossil"): 
+                  if k in n: s+=12
+              for k in ("sprite","icon","logo","map","layout","blueprint","concept","texture","invicon","block je","block be","item je","item be"):
+                  if k in n: s-=40
               return s
-
-          for code,title,cat in topics:
-              rec={"code":code,"title":title,"category":cat,"status":"pending"}
-              try:
-                  j=api({"action":"query","format":"json","redirects":"1","titles":title})
-                  page=next(iter(j.get("query",{}).get("pages",{}).values()),{})
-                  resolved=page.get("title",title); rec["resolved_title"]=resolved
-                  names=list_images(resolved)
-                  infos=info_batch(names)
-                  ranked=sorted(((score(i,cat),i) for i in infos),key=lambda x:x[0],reverse=True)
-                  if not ranked or ranked[0][0] < 5: raise RuntimeError("No scene candidate")
-                  bestscore,best=ranked[0]
-                  rec["candidate_score"]=bestscore; rec["wiki_file_title"]=best["title"].replace("File:","")
-                  rec["image_url"]=best["url"]; rec["width"]=best.get("width"); rec["height"]=best.get("height")
-                  rec["wiki_page_url"]="https://minecraft.wiki/w/"+urllib.parse.quote(resolved.replace(" ","_"),safe="()_'-")
-                  req=urllib.request.Request(best["url"],headers={"User-Agent":UA,"Referer":rec["wiki_page_url"]})
-                  with urllib.request.urlopen(req,timeout=70) as r:
-                      data=r.read(); ctype=r.headers.get_content_type()
-                  ext=pathlib.Path(urllib.parse.urlparse(best["url"]).path).suffix.lower()
-                  if ext not in (".png",".jpg",".jpeg",".webp",".gif"): ext=mimetypes.guess_extension(ctype) or ".img"
-                  fname=code+ext; (out/fname).write_bytes(data)
-                  rec.update({"status":"downloaded","filename":fname,"bytes":len(data),"content_type":ctype})
-              except Exception as e:
-                  rec.update({"status":"error","error":repr(e)})
-              meta.append(rec); print(code,title,rec["status"],rec.get("wiki_file_title",rec.get("error","")))
-              time.sleep(.08)
-          (out/"metadata.json").write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding="utf-8")
-          print("Downloaded",sum(x["status"]=="downloaded" for x in meta),"/",len(meta))
+          for code,title in pages:
+              folder=out/code; folder.mkdir(exist_ok=True)
+              ranked=sorted([(score(i),i) for i in infos(all_images(title))],key=lambda x:x[0],reverse=True)
+              kept=[]
+              for rank,(sc,i) in enumerate([x for x in ranked if x[0]>0][:12],1):
+                  try:
+                      req=urllib.request.Request(i["url"],headers={"User-Agent":UA,"Referer":"https://minecraft.wiki/"})
+                      with urllib.request.urlopen(req,timeout=60) as r: data=r.read(); ct=r.headers.get_content_type()
+                      ext={"image/png":"png","image/jpeg":"jpg","image/webp":"webp"}.get(ct,"img")
+                      fname=f"{rank:02d}.{ext}"; (folder/fname).write_bytes(data)
+                      kept.append({"rank":rank,"score":sc,"filename":f"{code}/{fname}","wiki_file_title":i["title"].replace("File:",""),"image_url":i["url"],"width":i.get("width"),"height":i.get("height")})
+                  except Exception as e: pass
+              meta.append({"code":code,"title":title,"candidates":kept})
+              print(code,title,len(kept))
+              time.sleep(.1)
+          (out/"metadata.json").write_text(json.dumps(meta,indent=2,ensure_ascii=False),encoding="utf-8")
           PY
-
-      - name: Upload scene replacements
+      - name: Upload QA candidates
         uses: actions/upload-artifact@v4
         with:
-          name: minecraft-scene-replacements-v2
+          name: minecraft-qa-candidates-v2
           path: assets/
           if-no-files-found: error
           compression-level: 6
