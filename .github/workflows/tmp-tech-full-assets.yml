@@ -1,9 +1,6 @@
 name: Temporary Tech Full Asset Collector
 
 on:
-  push:
-    branches:
-      - tmp-tech-prototype-20260822
   pull_request:
     branches:
       - main
@@ -21,21 +18,17 @@ jobs:
         run: |
           python3 -m pip install --quiet requests beautifulsoup4 pillow
           python3 - <<'PY'
-          import json, re, io, time, hashlib
+          import json, io, hashlib
           from pathlib import Path
           from urllib.parse import urljoin
+          from concurrent.futures import ThreadPoolExecutor, as_completed
           import requests
           from bs4 import BeautifulSoup
           from PIL import Image
 
           products=json.load(open('tmp-tech/products.json',encoding='utf-8'))
           out=Path('tech-assets'); out.mkdir(exist_ok=True)
-          sess=requests.Session()
-          sess.headers.update({
-            'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36',
-            'Accept-Language':'en-US,en;q=0.9,ar;q=0.7'
-          })
-          allmeta=[]
+          HEADERS={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36','Accept-Language':'en-US,en;q=0.9,ar;q=0.7'}
 
           def add_candidate(arr,u,base):
               if not u: return
@@ -47,11 +40,12 @@ jobs:
               if any(x in low for x in ['favicon','sprite','icon-','/icons/','logo.svg','logo.png','spacer','pixel.gif']): return
               if u not in arr: arr.append(u)
 
-          for idx,p in enumerate(products,1):
+          def collect(p):
+              sess=requests.Session(); sess.headers.update(HEADERS)
               rec={'id':p['id'],'name':p['name'],'brand':p['brand'],'page_url':p['url'],'status':'pending','images':[]}
               folder=out/p['id']; folder.mkdir(exist_ok=True)
               try:
-                  r=sess.get(p['url'],timeout=35,allow_redirects=True)
+                  r=sess.get(p['url'],timeout=18,allow_redirects=True)
                   rec['http_status']=r.status_code; rec['resolved_url']=r.url
                   r.raise_for_status()
                   soup=BeautifulSoup(r.text,'html.parser')
@@ -67,39 +61,42 @@ jobs:
                               parts=[x.strip().split()[0] for x in ss.split(',') if x.strip()]
                               for u in reversed(parts): add_candidate(cand,u,r.url)
                   rec['candidate_count']=len(cand)
-                  seen_hash=set()
-                  for u in cand:
+                  seen=set()
+                  for u in cand[:80]:
                       if len(rec['images'])>=6: break
                       try:
-                          rr=sess.get(u,timeout=30,headers={'Referer':r.url})
+                          rr=sess.get(u,timeout=12,headers={**HEADERS,'Referer':r.url})
                           if rr.status_code!=200 or len(rr.content)<18000: continue
                           ctype=rr.headers.get('content-type','').split(';')[0].lower()
                           if not ctype.startswith('image/'): continue
-                          im=Image.open(io.BytesIO(rr.content)); im.load()
-                          w,h=im.size
+                          im=Image.open(io.BytesIO(rr.content)); im.load(); w,h=im.size
                           if w<420 or h<280: continue
                           hh=hashlib.sha1(rr.content).hexdigest()
-                          if hh in seen_hash: continue
-                          seen_hash.add(hh)
+                          if hh in seen: continue
+                          seen.add(hh)
                           ext=(im.format or 'PNG').lower()
                           if ext=='jpeg': ext='jpg'
                           if ext not in ('jpg','png','webp'): ext='png'
-                          n=len(rec['images'])+1
-                          fname=f'{n:02d}.{ext}'
+                          n=len(rec['images'])+1; fname=f'{n:02d}.{ext}'
                           (folder/fname).write_bytes(rr.content)
                           rec['images'].append({'filename':f'{p["id"]}/{fname}','url':u,'width':w,'height':h,'bytes':len(rr.content),'content_type':ctype})
-                      except Exception:
-                          continue
+                      except Exception: pass
                   rec['status']='downloaded' if len(rec['images'])>=2 else ('partial' if rec['images'] else 'no_image')
               except Exception as e:
                   rec['status']='error'; rec['error']=repr(e)
-              allmeta.append(rec)
-              print(f'{idx:02d}/60 {p["id"]}: {rec["status"]} {len(rec["images"])}')
-              time.sleep(.15)
+              return rec
 
-          (out/'metadata.json').write_text(json.dumps(allmeta,ensure_ascii=False,indent=2),encoding='utf-8')
-          print('SUMMARY', {s:sum(x['status']==s for x in allmeta) for s in sorted(set(x['status'] for x in allmeta))})
-          print('PRODUCTS WITH >=2 IMAGES',sum(len(x['images'])>=2 for x in allmeta),'/',len(allmeta))
+          results=[]
+          with ThreadPoolExecutor(max_workers=10) as ex:
+              futs={ex.submit(collect,p):p for p in products}
+              for fut in as_completed(futs):
+                  rec=fut.result(); results.append(rec)
+                  print(rec['id'],rec['status'],len(rec['images']))
+          order={p['id']:i for i,p in enumerate(products)}
+          results.sort(key=lambda x:order[x['id']])
+          (out/'metadata.json').write_text(json.dumps(results,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('SUMMARY', {s:sum(x['status']==s for x in results) for s in sorted(set(x['status'] for x in results))})
+          print('PRODUCTS WITH >=2 IMAGES',sum(len(x['images'])>=2 for x in results),'/',len(results))
           PY
       - name: Upload collected official assets
         uses: actions/upload-artifact@v4
