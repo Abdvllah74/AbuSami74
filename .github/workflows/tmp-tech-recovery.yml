@@ -1,0 +1,85 @@
+name: Temporary Tech Recovery Collector
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect official recovery images
+        shell: bash
+        run: |
+          python3 -m pip install --quiet requests beautifulsoup4 pillow
+          python3 - <<'PY'
+          import json, io, hashlib
+          from pathlib import Path
+          from urllib.parse import urljoin
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          import requests
+          from bs4 import BeautifulSoup
+          from PIL import Image
+
+          products=json.load(open('tmp-tech/recovery.json',encoding='utf-8'))
+          out=Path('tech-recovery'); out.mkdir(exist_ok=True)
+          H={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36','Accept-Language':'en-US,en;q=0.9'}
+          def add(a,u,b):
+              if not u:return
+              u=u.strip().replace('\\u0026','&')
+              if u.startswith('//'):u='https:'+u
+              u=urljoin(b,u)
+              if not u.startswith('http'):return
+              low=u.lower()
+              if any(x in low for x in ['favicon','sprite','icon-','/icons/','logo.svg','logo.png','spacer','pixel.gif']):return
+              if u not in a:a.append(u)
+          def one(p):
+              s=requests.Session();s.headers.update(H);f=out/p['id'];f.mkdir(exist_ok=True)
+              rec={**p,'images':[],'status':'pending'}
+              try:
+                  r=s.get(p['url'],timeout=20,allow_redirects=True); rec['resolved_url']=r.url;rec['http_status']=r.status_code;r.raise_for_status()
+                  soup=BeautifulSoup(r.text,'html.parser');c=[]
+                  for k,v in [('property','og:image'),('property','og:image:secure_url'),('name','twitter:image'),('name','twitter:image:src')]:
+                      for t in soup.find_all('meta',attrs={k:v}):add(c,t.get('content'),r.url)
+                  for t in soup.find_all(['img','source']):
+                      for x in ['src','data-src','data-lazy-src','data-original']:add(c,t.get(x),r.url)
+                      for x in ['srcset','data-srcset']:
+                          ss=t.get(x)
+                          if ss:
+                              for u in reversed([z.strip().split()[0] for z in ss.split(',') if z.strip()]):add(c,u,r.url)
+                  seen=set()
+                  for u in c[:120]:
+                      if len(rec['images'])>=10:break
+                      try:
+                          q=s.get(u,timeout=12,headers={**H,'Referer':r.url})
+                          if q.status_code!=200 or len(q.content)<15000:continue
+                          if not q.headers.get('content-type','').lower().startswith('image/'):continue
+                          im=Image.open(io.BytesIO(q.content));im.load();w,h=im.size
+                          if w<400 or h<250:continue
+                          hh=hashlib.sha1(q.content).hexdigest()
+                          if hh in seen:continue
+                          seen.add(hh); ext=(im.format or 'PNG').lower();ext='jpg' if ext=='jpeg' else ext
+                          if ext not in ('jpg','png','webp'):ext='png'
+                          fn=f'{len(rec["images"])+1:02d}.{ext}';(f/fn).write_bytes(q.content)
+                          rec['images'].append({'filename':f'{p["id"]}/{fn}','url':u,'width':w,'height':h,'bytes':len(q.content)})
+                      except Exception:pass
+                  rec['status']='downloaded' if rec['images'] else 'no_image'
+              except Exception as e:rec['status']='error';rec['error']=repr(e)
+              return rec
+          res=[]
+          with ThreadPoolExecutor(max_workers=8) as ex:
+              for x in as_completed([ex.submit(one,p) for p in products]):
+                  r=x.result();res.append(r);print(r['id'],r['status'],len(r['images']))
+          order={p['id']:i for i,p in enumerate(products)};res.sort(key=lambda x:order[x['id']])
+          (out/'metadata.json').write_text(json.dumps(res,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tech-official-recovery
+          path: tech-recovery/
+          retention-days: 1
