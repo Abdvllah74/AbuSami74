@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - tmp-tech-prototype-20260822
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -18,9 +21,9 @@ jobs:
         run: |
           python3 -m pip install --quiet requests beautifulsoup4 pillow
           python3 - <<'PY'
-          import json, os, re, io, time, hashlib
+          import json, re, io, time, hashlib
           from pathlib import Path
-          from urllib.parse import urljoin, urlparse
+          from urllib.parse import urljoin
           import requests
           from bs4 import BeautifulSoup
           from PIL import Image
@@ -40,7 +43,6 @@ jobs:
               if u.startswith('//'): u='https:'+u
               u=urljoin(base,u)
               if not u.startswith('http'): return
-              # Ignore obvious sprites/icons/logos and data URLs.
               low=u.lower()
               if any(x in low for x in ['favicon','sprite','icon-','/icons/','logo.svg','logo.png','spacer','pixel.gif']): return
               if u not in arr: arr.append(u)
@@ -63,13 +65,8 @@ jobs:
                           ss=tag.get(a)
                           if ss:
                               parts=[x.strip().split()[0] for x in ss.split(',') if x.strip()]
-                              # Prefer the largest candidate (usually last).
                               for u in reversed(parts): add_candidate(cand,u,r.url)
-                  # Also catch common image URLs embedded in JSON/script payloads.
-                  for m in re.findall(r'https?:\\?/\\?/[^"\'<> ]+?\\.(?:jpg|jpeg|png|webp)(?:\\?[^"\'<> ]*)?',r.text,re.I):
-                      add_candidate(cand,m.replace('\\/','/'),r.url)
                   rec['candidate_count']=len(cand)
-
                   seen_hash=set()
                   for u in cand:
                       if len(rec['images'])>=6: break
