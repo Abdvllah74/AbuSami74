@@ -1,4 +1,4 @@
-name: Temporary Tech Recovery Collector
+name: Temporary Tech Replacement Collector
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Collect official recovery images
+      - name: Collect official replacement images
         shell: bash
         run: |
           python3 -m pip install --quiet requests beautifulsoup4 pillow
@@ -25,9 +25,8 @@ jobs:
           import requests
           from bs4 import BeautifulSoup
           from PIL import Image
-
-          products=json.load(open('tmp-tech/recovery.json',encoding='utf-8'))
-          out=Path('tech-recovery'); out.mkdir(exist_ok=True)
+          products=json.load(open('tmp-tech/replacements.json',encoding='utf-8'))
+          out=Path('tech-replacements'); out.mkdir(exist_ok=True)
           H={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36','Accept-Language':'en-US,en;q=0.9'}
           def add(a,u,b):
               if not u:return
@@ -42,7 +41,7 @@ jobs:
               s=requests.Session();s.headers.update(H);f=out/p['id'];f.mkdir(exist_ok=True)
               rec={**p,'images':[],'status':'pending'}
               try:
-                  r=s.get(p['url'],timeout=20,allow_redirects=True); rec['resolved_url']=r.url;rec['http_status']=r.status_code;r.raise_for_status()
+                  r=s.get(p['url'],timeout=20,allow_redirects=True);rec['resolved_url']=r.url;rec['http_status']=r.status_code;r.raise_for_status()
                   soup=BeautifulSoup(r.text,'html.parser');c=[]
                   for k,v in [('property','og:image'),('property','og:image:secure_url'),('name','twitter:image'),('name','twitter:image:src')]:
                       for t in soup.find_all('meta',attrs={k:v}):add(c,t.get('content'),r.url)
@@ -54,7 +53,7 @@ jobs:
                               for u in reversed([z.strip().split()[0] for z in ss.split(',') if z.strip()]):add(c,u,r.url)
                   seen=set()
                   for u in c[:120]:
-                      if len(rec['images'])>=10:break
+                      if len(rec['images'])>=8:break
                       try:
                           q=s.get(u,timeout=12,headers={**H,'Referer':r.url})
                           if q.status_code!=200 or len(q.content)<15000:continue
@@ -63,7 +62,7 @@ jobs:
                           if w<400 or h<250:continue
                           hh=hashlib.sha1(q.content).hexdigest()
                           if hh in seen:continue
-                          seen.add(hh); ext=(im.format or 'PNG').lower();ext='jpg' if ext=='jpeg' else ext
+                          seen.add(hh);ext=(im.format or 'PNG').lower();ext='jpg' if ext=='jpeg' else ext
                           if ext not in ('jpg','png','webp'):ext='png'
                           fn=f'{len(rec["images"])+1:02d}.{ext}';(f/fn).write_bytes(q.content)
                           rec['images'].append({'filename':f'{p["id"]}/{fn}','url':u,'width':w,'height':h,'bytes':len(q.content)})
@@ -80,6 +79,6 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: tech-official-recovery
-          path: tech-recovery/
+          name: tech-official-replacements
+          path: tech-replacements/
           retention-days: 1
