@@ -1,0 +1,22 @@
+[
+{"id":"iphone16e","name":"آيفون 16e","url":"https://www.apple.com/newsroom/2025/02/apple-debuts-iphone-16e-a-powerful-new-member-of-the-iphone-16-family/","brand":"Apple"},
+{"id":"homepodmini","name":"HomePod mini","url":"https://www.apple.com/sa/newsroom/2024/07/apple-introduces-homepod-mini-in-midnight/","brand":"Apple"},
+{"id":"watchultra","name":"جالكسي Watch Ultra","url":"https://news.samsung.com/global/samsungs-expanded-wearables-portfolio-unlocks-intelligent-health-experiences-for-all","brand":"Samsung"},
+{"id":"buds3pro","name":"جالكسي Buds3 Pro","url":"https://news.samsung.com/global/interview-behind-the-scenes-of-galaxy-buds3-series-product-planning-a-superior-audio-experience","brand":"Samsung"},
+{"id":"tabs10ultra","name":"جالكسي Tab S10 Ultra","url":"https://news.samsung.com/global/galaxy-tab-s10-series-is-samsungs-ai-ready-tablet","brand":"Samsung"},
+{"id":"a56","name":"جالكسي A56 5G","url":"https://news.samsung.com/global/mwc-2025-powered-by-awesome-intelligence-introducing-the-galaxy-a56-5g-and-a36-5g","brand":"Samsung"},
+{"id":"tabs10fe","name":"جالكسي Tab S10 FE","url":"https://news.samsung.com/global/galaxy-tab-s10-fe-series-brings-intelligent-experiences-to-the-forefront-with-premium-versatile-design","brand":"Samsung"},
+{"id":"galaxyring","name":"جالكسي Ring","url":"https://news.samsung.com/global/unboxing-meet-galaxy-ring-a-personalized-health-care-device-encased-in-a-fancy-charging-case","brand":"Samsung"},
+{"id":"book5pro","name":"جالكسي Book5 Pro","url":"https://news.samsung.com/global/samsung-diversifies-ai-pc-lineup-with-new-galaxy-book5-pro-and-galaxy-book5-360","brand":"Samsung"},
+{"id":"note20ultra","name":"جالكسي Note20 Ultra","url":"https://news.samsung.com/global/infographic-an-up-close-look-at-the-galaxy-note20-and-note20-ultra","brand":"Samsung"},
+{"id":"watch7","name":"جالكسي Watch7","url":"https://news.samsung.com/global/samsungs-expanded-wearables-portfolio-unlocks-intelligent-health-experiences-for-all","brand":"Samsung"},
+{"id":"t9ssd","name":"Samsung Portable SSD T9","url":"https://news.samsung.com/global/samsungs-portable-ssd-t9-empowers-professionals-with-exceptional-performance-and-data-reliability","brand":"Samsung"},
+{"id":"990pro","name":"Samsung 990 PRO SSD","url":"https://news.samsung.com/global/samsung-electronics-4tb-ssd-990-pro-series-brings-ultimate-performance-and-capacity-for-gamers-and-creators","brand":"Samsung"},
+{"id":"quest3s","name":"Meta Quest 3S","url":"https://about.fb.com/news/2024/09/meta-quest-3s-our-most-affordable-mixed-reality-headset/","brand":"Meta"},
+{"id":"gopro13","name":"GoPro HERO13 Black","url":"https://gopro.com/en/us/shop/cameras/buy/hero13black/CHDHX-131-master.html","brand":"GoPro"},
+{"id":"ps4pro","name":"بلايستيشن 4 برو","url":"https://blog.playstation.com/2016/09/07/playstation-meeting-2016-introducing-ps4-pro-and-the-slimmer-lighter-ps4/","brand":"PlayStation"},
+{"id":"psclassic","name":"PlayStation Classic","url":"https://blog.playstation.com/2018/09/18/introducing-playstation-classic-with-20-pre-loaded-games/","brand":"PlayStation"},
+{"id":"pura70ultra","name":"هواوي Pura 70 Ultra","url":"https://consumer.huawei.com/sa/offer/pura-70-series/","brand":"Huawei"},
+{"id":"matepadpro132","name":"هواوي MatePad Pro 13.2","url":"https://consumer.huawei.com/sa-en/support/tablets/matepad-pro-13-2/","brand":"Huawei"},
+{"id":"freebudspro4","name":"هواوي FreeBuds Pro 4","url":"https://consumer.huawei.com/sa-en/support/headphones/freebuds-pro-4/","brand":"Huawei"}
+]
