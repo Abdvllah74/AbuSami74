@@ -1,62 +1,722 @@
 [
-  {"id":"iphone17pro","name":"آيفون 17 برو","url":"https://www.apple.com/sa/iphone-17-pro/","brand":"Apple"},
-  {"id":"iphone17","name":"آيفون 17","url":"https://www.apple.com/sa/iphone-17/","brand":"Apple"},
-  {"id":"iphoneair","name":"آيفون Air","url":"https://www.apple.com/sa/iphone-air/","brand":"Apple"},
-  {"id":"iphone16","name":"آيفون 16","url":"https://www.apple.com/sa/iphone-16/","brand":"Apple"},
-  {"id":"iphone16e","name":"آيفون 16e","url":"https://www.apple.com/sa/iphone-16e/","brand":"Apple"},
-  {"id":"ipadpro","name":"آيباد برو","url":"https://www.apple.com/sa/ipad-pro/","brand":"Apple"},
-  {"id":"ipadair","name":"آيباد Air","url":"https://www.apple.com/sa/ipad-air/","brand":"Apple"},
-  {"id":"ipadmini","name":"آيباد ميني","url":"https://www.apple.com/sa/ipad-mini/","brand":"Apple"},
-  {"id":"macbookair","name":"ماك بوك Air","url":"https://www.apple.com/sa/macbook-air/","brand":"Apple"},
-  {"id":"macbookpro","name":"ماك بوك Pro","url":"https://www.apple.com/sa/macbook-pro/","brand":"Apple"},
-  {"id":"airpodspro2","name":"AirPods Pro","url":"https://www.apple.com/sa/airpods-pro/","brand":"Apple"},
-  {"id":"watchultra2","name":"Apple Watch Ultra","url":"https://www.apple.com/sa/apple-watch-ultra-2/","brand":"Apple"},
-  {"id":"s25ultra","name":"جالكسي S25 ألترا","url":"https://www.samsung.com/sa/smartphones/galaxy-s25-ultra/","brand":"Samsung"},
-  {"id":"s25","name":"جالكسي S25","url":"https://www.samsung.com/sa/smartphones/galaxy-s25/","brand":"Samsung"},
-  {"id":"zfold7","name":"جالكسي Z Fold7","url":"https://www.samsung.com/sa/smartphones/galaxy-z-fold7/","brand":"Samsung"},
-  {"id":"zflip7","name":"جالكسي Z Flip7","url":"https://www.samsung.com/sa/smartphones/galaxy-z-flip7/","brand":"Samsung"},
-  {"id":"tabs10ultra","name":"جالكسي Tab S10 Ultra","url":"https://www.samsung.com/sa/tablets/galaxy-tab-s10-ultra/","brand":"Samsung"},
-  {"id":"tabs10fe","name":"جالكسي Tab S10 FE","url":"https://www.samsung.com/sa/tablets/galaxy-tab-s10-fe/","brand":"Samsung"},
-  {"id":"watchultra","name":"جالكسي Watch Ultra","url":"https://www.samsung.com/sa/watches/galaxy-watch-ultra/","brand":"Samsung"},
-  {"id":"buds3pro","name":"جالكسي Buds3 Pro","url":"https://www.samsung.com/sa/audio-sound/galaxy-buds/galaxy-buds3-pro/","brand":"Samsung"},
-  {"id":"galaxyring","name":"جالكسي Ring","url":"https://www.samsung.com/sa/rings/galaxy-ring/","brand":"Samsung"},
-  {"id":"a56","name":"جالكسي A56 5G","url":"https://www.samsung.com/sa/smartphones/galaxy-a/galaxy-a56-5g/","brand":"Samsung"},
-  {"id":"a36","name":"جالكسي A36 5G","url":"https://www.samsung.com/sa/smartphones/galaxy-a/galaxy-a36-5g/","brand":"Samsung"},
-  {"id":"book5pro","name":"جالكسي Book5 Pro","url":"https://www.samsung.com/sa/computers/galaxy-book/galaxy-book5-pro/","brand":"Samsung"},
-  {"id":"ps5pro","name":"بلايستيشن 5 برو","url":"https://www.playstation.com/en-sa/ps5/ps5-pro/","brand":"PlayStation"},
-  {"id":"ps5","name":"بلايستيشن 5","url":"https://www.playstation.com/en-sa/ps5/","brand":"PlayStation"},
-  {"id":"dualsenseedge","name":"DualSense Edge","url":"https://www.playstation.com/en-sa/accessories/dualsense-edge-wireless-controller/","brand":"PlayStation"},
-  {"id":"psportal","name":"PlayStation Portal","url":"https://www.playstation.com/en-sa/accessories/playstation-portal-remote-player/","brand":"PlayStation"},
-  {"id":"psvr2","name":"PlayStation VR2","url":"https://www.playstation.com/en-sa/ps-vr2/","brand":"PlayStation"},
-  {"id":"pulseelite","name":"PULSE Elite","url":"https://www.playstation.com/en-sa/accessories/pulse-elite-wireless-headset/","brand":"PlayStation"},
-  {"id":"accesscontroller","name":"Access Controller","url":"https://www.playstation.com/en-sa/accessories/access-controller/","brand":"PlayStation"},
-  {"id":"dualsense","name":"يد DualSense","url":"https://www.playstation.com/en-sa/accessories/dualsense-wireless-controller/","brand":"PlayStation"},
-  {"id":"seriesx","name":"Xbox Series X","url":"https://www.xbox.com/en-SA/consoles/xbox-series-x","brand":"Xbox"},
-  {"id":"seriess","name":"Xbox Series S","url":"https://www.xbox.com/en-SA/consoles/xbox-series-s","brand":"Xbox"},
-  {"id":"elite2","name":"Xbox Elite Series 2","url":"https://www.xbox.com/en-SA/accessories/controllers/elite-wireless-controller-series-2","brand":"Xbox"},
-  {"id":"xboxwireless","name":"يد Xbox Wireless","url":"https://www.xbox.com/en-SA/accessories/controllers/xbox-wireless-controller","brand":"Xbox"},
-  {"id":"adaptive","name":"Xbox Adaptive Controller","url":"https://www.xbox.com/en-SA/accessories/controllers/xbox-adaptive-controller","brand":"Xbox"},
-  {"id":"xboxheadset","name":"Xbox Wireless Headset","url":"https://www.xbox.com/en-SA/accessories/headsets/xbox-wireless-headset","brand":"Xbox"},
-  {"id":"switch2","name":"Nintendo Switch 2","url":"https://www.nintendo.com/us/gaming-systems/switch-2/","brand":"Nintendo"},
-  {"id":"switcholed","name":"Nintendo Switch OLED","url":"https://www.nintendo.com/us/gaming-systems/switch/oled-model/","brand":"Nintendo"},
-  {"id":"switchlite","name":"Nintendo Switch Lite","url":"https://www.nintendo.com/us/gaming-systems/switch/lite/","brand":"Nintendo"},
-  {"id":"procontroller","name":"Nintendo Switch Pro Controller","url":"https://www.nintendo.com/us/store/products/pro-controller-104888/","brand":"Nintendo"},
-  {"id":"joycon2","name":"Joy-Con 2","url":"https://www.nintendo.com/us/gaming-systems/switch-2/accessories/","brand":"Nintendo"},
-  {"id":"ringfit","name":"Ring-Con","url":"https://www.nintendo.com/us/store/products/ring-fit-adventure-switch/","brand":"Nintendo"},
-  {"id":"pura70ultra","name":"هواوي Pura 70 Ultra","url":"https://consumer.huawei.com/sa-en/phones/pura70-ultra/","brand":"Huawei"},
-  {"id":"matext","name":"هواوي Mate XT","url":"https://consumer.huawei.com/en/phones/mate-xt-ultimate-design/","brand":"Huawei"},
-  {"id":"watchgt5pro","name":"هواوي Watch GT 5 Pro","url":"https://consumer.huawei.com/sa-en/wearables/watch-gt5-pro/","brand":"Huawei"},
-  {"id":"xiaomi15ultra","name":"شاومي 15 ألترا","url":"https://www.mi.com/global/product/xiaomi-15-ultra/","brand":"Xiaomi"},
-  {"id":"redminote14proplus","name":"ريدمي Note 14 Pro+ 5G","url":"https://www.mi.com/global/product/redmi-note-14-pro-plus-5g/","brand":"Xiaomi"},
-  {"id":"honormagic7pro","name":"HONOR Magic7 Pro","url":"https://www.honor.com/sa-en/phones/honor-magic7-pro/","brand":"Honor"},
-  {"id":"quest3","name":"Meta Quest 3","url":"https://www.meta.com/quest/quest-3/","brand":"Meta"},
-  {"id":"djimini4pro","name":"DJI Mini 4 Pro","url":"https://www.dji.com/mini-4-pro","brand":"DJI"},
-  {"id":"osmopocket3","name":"DJI Osmo Pocket 3","url":"https://www.dji.com/osmo-pocket-3","brand":"DJI"},
-  {"id":"gopro13","name":"GoPro HERO13 Black","url":"https://gopro.com/en/us/shop/cameras/hero13-black/CHDHX-131-master.html","brand":"GoPro"},
-  {"id":"g502xplus","name":"Logitech G502 X Plus","url":"https://www.logitechg.com/en-us/products/gaming-mice/g502-x-plus-wireless-lightforce.910-006160.html","brand":"Logitech"},
-  {"id":"mxmaster3s","name":"Logitech MX Master 3S","url":"https://www.logitech.com/en-us/products/mice/mx-master-3s.910-006556.html","brand":"Logitech"},
-  {"id":"blackwidowv4pro","name":"Razer BlackWidow V4 Pro","url":"https://www.razer.com/gaming-keyboards/razer-blackwidow-v4-pro","brand":"Razer"},
-  {"id":"rogallyx","name":"ROG Ally X","url":"https://rog.asus.com/gaming-handhelds/rog-ally/rog-ally-x-2024/","brand":"ASUS"},
-  {"id":"steamdeckoled","name":"Steam Deck OLED","url":"https://store.steampowered.com/steamdeck/","brand":"Valve"},
-  {"id":"wh1000xm5","name":"Sony WH-1000XM5","url":"https://electronics.sony.com/audio/headphones/headband/p/wh1000xm5-b","brand":"Sony"}
+  {
+    "id": "iphone17pro",
+    "name": "آيفون 17 برو",
+    "url": "https://www.apple.com/sa/iphone-17-pro/",
+    "brand": "Apple"
+  },
+  {
+    "id": "s25ultra",
+    "name": "جالكسي S25 ألترا",
+    "url": "https://www.samsung.com/sa/smartphones/galaxy-s25-ultra/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "ps5",
+    "name": "بلايستيشن 5",
+    "url": "https://www.playstation.com/en-sa/ps5/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "dualsense",
+    "name": "يد DualSense",
+    "url": "https://www.playstation.com/en-sa/accessories/dualsense-wireless-controller/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "seriesx",
+    "name": "Xbox Series X",
+    "url": "https://www.xbox.com/en-US/consoles/xbox-series-x",
+    "brand": "Xbox"
+  },
+  {
+    "id": "seriess",
+    "name": "Xbox Series S",
+    "url": "https://www.xbox.com/en-US/consoles/xbox-series-s",
+    "brand": "Xbox"
+  },
+  {
+    "id": "switch2",
+    "name": "Nintendo Switch 2",
+    "url": "https://www.nintendo.com/us/gaming-systems/switch-2/",
+    "brand": "Nintendo"
+  },
+  {
+    "id": "zflip7",
+    "name": "جالكسي Z Flip7",
+    "url": "https://www.samsung.com/sa/smartphones/galaxy-z-flip7/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "ipadpro",
+    "name": "آيباد برو M4",
+    "url": "https://www.apple.com/sa/newsroom/2024/05/apple-unveils-stunning-new-ipad-pro-with-m4-chip-and-apple-pencil-pro/",
+    "brand": "Apple"
+  },
+  {
+    "id": "macbookair",
+    "name": "ماك بوك Air",
+    "url": "https://www.apple.com/sa/macbook-air/",
+    "brand": "Apple"
+  },
+  {
+    "id": "airpodspro2",
+    "name": "AirPods Pro 2",
+    "url": "https://www.apple.com/sa/airpods-pro/",
+    "brand": "Apple"
+  },
+  {
+    "id": "watchultra2",
+    "name": "Apple Watch Ultra 2",
+    "url": "https://www.apple.com/sa/newsroom/2023/09/apple-unveils-apple-watch-ultra-2/",
+    "brand": "Apple"
+  },
+  {
+    "id": "watchultra",
+    "name": "جالكسي Watch Ultra",
+    "url": "https://www.samsung.com/sa/watches/galaxy-watch/galaxy-watch-ultra-titanium-gray-lte-sm-l705fdaaksa/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "buds3pro",
+    "name": "جالكسي Buds3 Pro",
+    "url": "https://www.samsung.com/sa/audio-sound/galaxy-buds/galaxy-buds3-pro/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "pura70ultra",
+    "name": "هواوي Pura 70 Ultra",
+    "url": "https://consumer.huawei.com/sa-en/support/phones/pura70-ultra/",
+    "brand": "Huawei"
+  },
+  {
+    "id": "xiaomi15ultra",
+    "name": "شاومي 15 ألترا",
+    "url": "https://www.mi.com/global/product/xiaomi-15-ultra/",
+    "brand": "Xiaomi"
+  },
+  {
+    "id": "quest3",
+    "name": "Meta Quest 3",
+    "url": "https://about.fb.com/news/2023/09/meet-meta-quest-3-mixed-reality-headset/",
+    "brand": "Meta"
+  },
+  {
+    "id": "djimini4pro",
+    "name": "DJI Mini 4 Pro",
+    "url": "https://www.dji.com/newsroom/news/unlock-creativity-with-dji-mini-4-pro-all-in-one-aerial-solution",
+    "brand": "DJI"
+  },
+  {
+    "id": "osmopocket3",
+    "name": "DJI Osmo Pocket 3",
+    "url": "https://www.dji.com/nl/newsroom/news/dji-releases-the-osmo-pocket-3-for-moving-moments-with-unparalleled-precision-en",
+    "brand": "DJI"
+  },
+  {
+    "id": "gopro13",
+    "name": "GoPro HERO13 Black",
+    "url": "https://gopro.com/en/us/news/gopro-announces-hero13-black-and-tiny-hero-camera",
+    "brand": "GoPro"
+  },
+  {
+    "id": "g502xplus",
+    "name": "Logitech G502 X Plus",
+    "url": "https://www.logitechg.com/en-us/products/gaming-mice/g502-x-plus-wireless-lightforce.910-006160.html",
+    "brand": "Logitech"
+  },
+  {
+    "id": "mxmaster3s",
+    "name": "Logitech MX Master 3S",
+    "url": "https://www.logitech.com/en-us/products/mice/mx-master-3s.910-006556.html",
+    "brand": "Logitech"
+  },
+  {
+    "id": "blackwidowv4pro",
+    "name": "Razer BlackWidow V4 Pro",
+    "url": "https://www.razer.com/gaming-keyboards/razer-blackwidow-v4-pro",
+    "brand": "Razer"
+  },
+  {
+    "id": "rogallyx",
+    "name": "ROG Ally X",
+    "url": "https://rog.asus.com/gaming-handhelds/rog-ally/rog-ally-x-2024/",
+    "brand": "ASUS"
+  },
+  {
+    "id": "steamdeckoled",
+    "name": "Steam Deck OLED",
+    "url": "https://store.steampowered.com/steamdeck/",
+    "brand": "Valve"
+  },
+  {
+    "id": "wh1000xm6",
+    "name": "Sony WH-1000XM6",
+    "url": "https://www.sony.com/en-sa/headphones/products/wh-1000xm6",
+    "brand": "Sony"
+  },
+  {
+    "id": "psportal",
+    "name": "PlayStation Portal",
+    "url": "https://www.playstation.com/en-sa/accessories/playstation-portal-remote-player/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "psvr2",
+    "name": "PlayStation VR2",
+    "url": "https://www.playstation.com/en-sa/ps-vr2/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "switcholed",
+    "name": "Nintendo Switch OLED",
+    "url": "https://www.nintendo.com/us/gaming-systems/switch/oled-model/",
+    "brand": "Nintendo"
+  },
+  {
+    "id": "switchlite",
+    "name": "Nintendo Switch Lite",
+    "url": "https://www.nintendo.com/us/gaming-systems/switch/lite/",
+    "brand": "Nintendo"
+  },
+  {
+    "id": "tabs10ultra",
+    "name": "جالكسي Tab S10 Ultra",
+    "url": "https://www.samsung.com/sa/tablets/galaxy-tab-s/galaxy-tab-s10-ultra-buds3-pro-f-fa00combo10/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "macbookpro",
+    "name": "ماك بوك Pro",
+    "url": "https://www.apple.com/sa/macbook-pro/",
+    "brand": "Apple"
+  },
+  {
+    "id": "imac",
+    "name": "آي ماك iMac",
+    "url": "https://www.apple.com/sa/imac/",
+    "brand": "Apple"
+  },
+  {
+    "id": "macmini",
+    "name": "ماك ميني Mac mini",
+    "url": "https://www.apple.com/sa/mac-mini/",
+    "brand": "Apple"
+  },
+  {
+    "id": "appletv4k",
+    "name": "Apple TV 4K",
+    "url": "https://www.apple.com/sa/apple-tv-4k/",
+    "brand": "Apple"
+  },
+  {
+    "id": "airtag",
+    "name": "AirTag",
+    "url": "https://www.apple.com/sa/airtag/",
+    "brand": "Apple"
+  },
+  {
+    "id": "homepodmini",
+    "name": "HomePod mini",
+    "url": "https://www.apple.com/sa/homepod-mini/",
+    "brand": "Apple"
+  },
+  {
+    "id": "honormagic7pro",
+    "name": "HONOR Magic7 Pro",
+    "url": "https://www.honor.com/sa-en/phones/honor-magic7-pro/",
+    "brand": "Honor"
+  },
+  {
+    "id": "a56",
+    "name": "جالكسي A56 5G",
+    "url": "https://www.samsung.com/sa/smartphones/galaxy-a/galaxy-a56-5g-awesome-olive-128gb-sm-a566bzgvmea/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "gproxsuperlight2",
+    "name": "Logitech G PRO X SUPERLIGHT 2",
+    "url": "https://www.logitechg.com/en-us/products/gaming-mice/pro-x2-superlight-wireless-mouse.910-006628.html",
+    "brand": "Logitech"
+  },
+  {
+    "id": "iphone17",
+    "name": "آيفون 17",
+    "url": "https://www.apple.com/sa/iphone-17/",
+    "brand": "Apple"
+  },
+  {
+    "id": "iphoneair",
+    "name": "آيفون Air",
+    "url": "https://www.apple.com/sa/iphone-air/",
+    "brand": "Apple"
+  },
+  {
+    "id": "iphone16",
+    "name": "آيفون 16",
+    "url": "https://www.apple.com/sa/iphone-16/",
+    "brand": "Apple"
+  },
+  {
+    "id": "iphone16e",
+    "name": "آيفون 16e",
+    "url": "https://www.apple.com/sa/iphone-16e/",
+    "brand": "Apple"
+  },
+  {
+    "id": "ipadair",
+    "name": "آيباد Air",
+    "url": "https://www.apple.com/sa/ipad-air/",
+    "brand": "Apple"
+  },
+  {
+    "id": "ipadmini",
+    "name": "آيباد ميني",
+    "url": "https://www.apple.com/sa/ipad-mini/",
+    "brand": "Apple"
+  },
+  {
+    "id": "zfold7",
+    "name": "جالكسي Z Fold7",
+    "url": "https://www.samsung.com/sa/smartphones/galaxy-z-fold7/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "s25",
+    "name": "جالكسي S25",
+    "url": "https://www.samsung.com/sa/smartphones/galaxy-s25/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "tabs10fe",
+    "name": "جالكسي Tab S10 FE",
+    "url": "https://www.samsung.com/sa/tablets/galaxy-tab-s/galaxy-tab-s10-fe-gray-128gb-sm-x520nzaamea/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "galaxyring",
+    "name": "جالكسي Ring",
+    "url": "https://www.samsung.com/sa/rings/galaxy-ring/galaxy-ring-titanium-silver-size-5-sm-q505nzsamea/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "book5pro",
+    "name": "جالكسي Book5 Pro",
+    "url": "https://www.samsung.com/us/computing/galaxy-books/galaxy-book5-pro/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "ps5pro",
+    "name": "بلايستيشن 5 برو",
+    "url": "https://www.playstation.com/en-sa/ps5/ps5-pro/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "dualsenseedge",
+    "name": "DualSense Edge",
+    "url": "https://www.playstation.com/en-sa/accessories/dualsense-edge-wireless-controller/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "pulseelite",
+    "name": "PULSE Elite",
+    "url": "https://www.playstation.com/en-sa/accessories/pulse-elite-wireless-headset/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "accesscontroller",
+    "name": "Access Controller",
+    "url": "https://www.playstation.com/en-sa/accessories/access-controller/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "elite2",
+    "name": "Xbox Elite Series 2",
+    "url": "https://www.xbox.com/en-US/accessories/controllers/elite-wireless-controller-series-2",
+    "brand": "Xbox"
+  },
+  {
+    "id": "xboxwireless",
+    "name": "يد Xbox Wireless",
+    "url": "https://www.xbox.com/en-US/accessories/controllers/xbox-wireless-controller",
+    "brand": "Xbox"
+  },
+  {
+    "id": "adaptive",
+    "name": "Xbox Adaptive Controller",
+    "url": "https://www.xbox.com/en-US/accessories/controllers/xbox-adaptive-controller",
+    "brand": "Xbox"
+  },
+  {
+    "id": "procontroller",
+    "name": "Nintendo Switch Pro Controller",
+    "url": "https://www.nintendo.com/us/store/products/pro-controller/",
+    "brand": "Nintendo"
+  },
+  {
+    "id": "joycon2",
+    "name": "Joy-Con 2",
+    "url": "https://www.nintendo.com/us/gaming-systems/switch-2/accessories/",
+    "brand": "Nintendo"
+  },
+  {
+    "id": "ringfit",
+    "name": "Ring-Con",
+    "url": "https://www.nintendo.com/us/store/products/ring-fit-adventure-switch/",
+    "brand": "Nintendo"
+  },
+  {
+    "id": "matext",
+    "name": "هواوي Mate XT",
+    "url": "https://consumer.huawei.com/en/phones/mate-xt-ultimate-design/",
+    "brand": "Huawei"
+  },
+  {
+    "id": "watchgt5pro",
+    "name": "هواوي Watch GT 5 Pro",
+    "url": "https://consumer.huawei.com/sa-en/wearables/watch-gt5-pro/",
+    "brand": "Huawei"
+  },
+  {
+    "id": "redminote14proplus",
+    "name": "ريدمي Note 14 Pro+ 5G",
+    "url": "https://www.mi.com/global/product/redmi-note-14-pro-plus-5g/",
+    "brand": "Xiaomi"
+  },
+  {
+    "id": "quest3s",
+    "name": "Meta Quest 3S",
+    "url": "https://www.meta.com/quest/quest-3s/",
+    "brand": "Meta"
+  },
+  {
+    "id": "djiavata2",
+    "name": "DJI Avata 2",
+    "url": "https://www.dji.com/avata-2",
+    "brand": "DJI"
+  },
+  {
+    "id": "djineo",
+    "name": "DJI Neo",
+    "url": "https://www.dji.com/neo",
+    "brand": "DJI"
+  },
+  {
+    "id": "osmoaction5pro",
+    "name": "DJI Osmo Action 5 Pro",
+    "url": "https://www.dji.com/osmo-action-5-pro",
+    "brand": "DJI"
+  },
+  {
+    "id": "gopromax",
+    "name": "GoPro MAX",
+    "url": "https://gopro.com/en/us/shop/cameras/max/CHDHZ-202-master.html",
+    "brand": "GoPro"
+  },
+  {
+    "id": "g915x",
+    "name": "Logitech G915 X LIGHTSPEED",
+    "url": "https://www.logitechg.com/en-us/products/gaming-keyboards/g915-x-lightspeed-wireless-gaming-keyboard.html",
+    "brand": "Logitech"
+  },
+  {
+    "id": "deathadderv3pro",
+    "name": "Razer DeathAdder V3 Pro",
+    "url": "https://www.razer.com/gaming-mice/razer-deathadder-v3-pro",
+    "brand": "Razer"
+  },
+  {
+    "id": "blacksharkv2pro",
+    "name": "Razer BlackShark V2 Pro",
+    "url": "https://www.razer.com/gaming-headsets/razer-blackshark-v2-pro",
+    "brand": "Razer"
+  },
+  {
+    "id": "rogzephyrusg14",
+    "name": "ROG Zephyrus G14",
+    "url": "https://rog.asus.com/laptops/rog-zephyrus/rog-zephyrus-g14-2025/",
+    "brand": "ASUS"
+  },
+  {
+    "id": "zenbookduo",
+    "name": "ASUS Zenbook DUO",
+    "url": "https://www.asus.com/laptops/for-home/zenbook/asus-zenbook-duo-2024-ux8406/",
+    "brand": "ASUS"
+  },
+  {
+    "id": "legiongo",
+    "name": "Lenovo Legion Go",
+    "url": "https://www.lenovo.com/us/en/p/handheld/legion-go/len106g0001",
+    "brand": "Lenovo"
+  },
+  {
+    "id": "surfacepro11",
+    "name": "Microsoft Surface Pro 11",
+    "url": "https://www.microsoft.com/en-us/surface/devices/surface-pro-11th-edition",
+    "brand": "Microsoft"
+  },
+  {
+    "id": "xps13",
+    "name": "Dell XPS 13",
+    "url": "https://www.dell.com/en-us/shop/dell-laptops/xps-13-laptop/spd/xps-13-9350-laptop",
+    "brand": "Dell"
+  },
+  {
+    "id": "spectrex360",
+    "name": "HP Spectre x360 14",
+    "url": "https://www.hp.com/us-en/shop/pdp/hp-spectre-x360-2-in-1-laptop-14-eu0097nr",
+    "brand": "HP"
+  },
+  {
+    "id": "wf1000xm5",
+    "name": "Sony WF-1000XM5",
+    "url": "https://www.sony.com/ar-sa/headphones/products/wf-1000xm5?locale=ar_SA",
+    "brand": "Sony"
+  },
+  {
+    "id": "garminfenix8",
+    "name": "Garmin fēnix 8",
+    "url": "https://www.garmin.com/en-US/p/1228429/",
+    "brand": "Garmin"
+  },
+  {
+    "id": "iphone15pro",
+    "name": "آيفون 15 برو",
+    "url": "https://www.apple.com/sa/newsroom/2023/09/apple-unveils-iphone-15-pro-and-iphone-15-pro-max/",
+    "brand": "Apple"
+  },
+  {
+    "id": "iphone14pro",
+    "name": "آيفون 14 برو",
+    "url": "https://www.apple.com/sa/newsroom/2022/09/apple-debuts-iphone-14-pro-and-iphone-14-pro-max/",
+    "brand": "Apple"
+  },
+  {
+    "id": "iphone13mini",
+    "name": "آيفون 13 ميني",
+    "url": "https://www.apple.com/newsroom/2021/09/apple-introduces-iphone-13-and-iphone-13-mini/",
+    "brand": "Apple"
+  },
+  {
+    "id": "iphonex",
+    "name": "آيفون X",
+    "url": "https://www.apple.com/newsroom/2017/09/the-future-is-here-iphone-x/",
+    "brand": "Apple"
+  },
+  {
+    "id": "iphone12mini",
+    "name": "آيفون 12 ميني",
+    "url": "https://www.apple.com/newsroom/2020/10/apple-announces-iphone-12-and-iphone-12-mini-a-new-era-for-iphone-with-5g/",
+    "brand": "Apple"
+  },
+  {
+    "id": "zflip6",
+    "name": "جالكسي Z Flip6",
+    "url": "https://www.samsung.com/sa/smartphones/galaxy-z-flip6/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "s24ultra",
+    "name": "جالكسي S24 ألترا",
+    "url": "https://www.samsung.com/sa/smartphones/galaxy-s24-ultra/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "note20ultra",
+    "name": "جالكسي Note20 Ultra",
+    "url": "https://www.samsung.com/global/galaxy/galaxy-note20/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "watch7",
+    "name": "جالكسي Watch7",
+    "url": "https://www.samsung.com/sa/watches/galaxy-watch/galaxy-watch7-44mm-green-bluetooth-sm-l310nzgamea/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "t9ssd",
+    "name": "Samsung Portable SSD T9",
+    "url": "https://semiconductor.samsung.com/consumer-storage/portable-ssd/t9/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "990pro",
+    "name": "Samsung 990 PRO SSD",
+    "url": "https://semiconductor.samsung.com/consumer-storage/internal-ssd/990-pro/",
+    "brand": "Samsung"
+  },
+  {
+    "id": "pulseexplore",
+    "name": "PULSE Explore",
+    "url": "https://www.playstation.com/en-sa/accessories/pulse-explore-wireless-earbuds/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "ps5camera",
+    "name": "كاميرا PS5 HD Camera",
+    "url": "https://www.playstation.com/en-sa/accessories/hd-camera/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "ps4pro",
+    "name": "بلايستيشن 4 برو",
+    "url": "https://blog.playstation.com/2016/09/07/ps4-pro-the-ultimate-4k-gaming-experience/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "psclassic",
+    "name": "PlayStation Classic",
+    "url": "https://blog.playstation.com/2018/09/19/introducing-playstation-classic-with-20-pre-loaded-games/",
+    "brand": "PlayStation"
+  },
+  {
+    "id": "xboxonex",
+    "name": "Xbox One X",
+    "url": "https://news.xbox.com/en-us/2017/06/11/xbox-one-x-e3-2017/",
+    "brand": "Xbox"
+  },
+  {
+    "id": "switch2procontroller",
+    "name": "Nintendo Switch 2 Pro Controller",
+    "url": "https://www.nintendo.com/us/gaming-systems/switch-2/accessories/",
+    "brand": "Nintendo"
+  },
+  {
+    "id": "matex6",
+    "name": "هواوي Mate X6",
+    "url": "https://consumer.huawei.com/sa-en/phones/mate-x6/",
+    "brand": "Huawei"
+  },
+  {
+    "id": "matepadpro132",
+    "name": "هواوي MatePad Pro 13.2",
+    "url": "https://consumer.huawei.com/sa-en/tablets/matepad-pro-13-2/",
+    "brand": "Huawei"
+  },
+  {
+    "id": "freebudspro4",
+    "name": "هواوي FreeBuds Pro 4",
+    "url": "https://consumer.huawei.com/sa-en/headphones/freebuds-pro-4/",
+    "brand": "Huawei"
+  },
+  {
+    "id": "watchfit3",
+    "name": "هواوي Watch Fit 3",
+    "url": "https://consumer.huawei.com/sa-en/wearables/watch-fit3/",
+    "brand": "Huawei"
+  },
+  {
+    "id": "xiaomimixflip",
+    "name": "Xiaomi MIX Flip",
+    "url": "https://www.mi.com/global/product/xiaomi-mix-flip/",
+    "brand": "Xiaomi"
+  },
+  {
+    "id": "xiaomipad7pro",
+    "name": "Xiaomi Pad 7 Pro",
+    "url": "https://www.mi.com/global/product/xiaomi-pad-7-pro/",
+    "brand": "Xiaomi"
+  },
+  {
+    "id": "smartband9pro",
+    "name": "Xiaomi Smart Band 9 Pro",
+    "url": "https://www.mi.com/global/product/xiaomi-smart-band-9-pro/",
+    "brand": "Xiaomi"
+  },
+  {
+    "id": "xiaomi14tpro",
+    "name": "Xiaomi 14T Pro",
+    "url": "https://www.mi.com/global/product/xiaomi-14t-pro/",
+    "brand": "Xiaomi"
+  },
+  {
+    "id": "magicv3",
+    "name": "HONOR Magic V3",
+    "url": "https://www.honor.com/sa-en/phones/honor-magic-v3/",
+    "brand": "Honor"
+  },
+  {
+    "id": "magicbookart14",
+    "name": "HONOR MagicBook Art 14",
+    "url": "https://www.honor.com/global/laptops/honor-magicbook-art-14/",
+    "brand": "Honor"
+  },
+  {
+    "id": "rogphone9pro",
+    "name": "ROG Phone 9 Pro",
+    "url": "https://rog.asus.com/phones/rog-phone-9-pro/",
+    "brand": "ASUS"
+  },
+  {
+    "id": "proartp16",
+    "name": "ASUS ProArt P16",
+    "url": "https://www.asus.com/laptops/for-creators/proart/proart-p16-h7606/",
+    "brand": "ASUS"
+  },
+  {
+    "id": "legiongos",
+    "name": "Lenovo Legion Go S",
+    "url": "https://www.lenovo.com/us/en/p/handheld/legion-go-s/len106g0002",
+    "brand": "Lenovo"
+  },
+  {
+    "id": "yogabook9i",
+    "name": "Lenovo Yoga Book 9i",
+    "url": "https://www.lenovo.com/us/en/p/laptops/yoga/yoga-2-in-1-series/yoga-book-9i-gen-10-14-inch-intel/",
+    "brand": "Lenovo"
+  },
+  {
+    "id": "alienwareaurorar16",
+    "name": "Alienware Aurora R16",
+    "url": "https://www.dell.com/en-us/shop/cty/pdp/spd/alienware-aurora-r16-desktop",
+    "brand": "Dell"
+  },
+  {
+    "id": "omentranscend14",
+    "name": "HP OMEN Transcend 14",
+    "url": "https://www.hp.com/us-en/shop/pdp/omen-transcend-laptop-14-fb0097nr",
+    "brand": "HP"
+  },
+  {
+    "id": "surfacelaptop7",
+    "name": "Microsoft Surface Laptop 7",
+    "url": "https://www.microsoft.com/en-us/surface/devices/surface-laptop-7th-edition",
+    "brand": "Microsoft"
+  },
+  {
+    "id": "rtx5090",
+    "name": "NVIDIA GeForce RTX 5090",
+    "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/",
+    "brand": "NVIDIA"
+  },
+  {
+    "id": "rtx5080",
+    "name": "NVIDIA GeForce RTX 5080",
+    "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5080/",
+    "brand": "NVIDIA"
+  },
+  {
+    "id": "ryzen9950x3d",
+    "name": "AMD Ryzen 9 9950X3D",
+    "url": "https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-9-9950x3d.html",
+    "brand": "AMD"
+  },
+  {
+    "id": "rx9070xt",
+    "name": "AMD Radeon RX 9070 XT",
+    "url": "https://www.amd.com/en/products/graphics/desktops/radeon/9000-series/amd-radeon-rx-9070-xt.html",
+    "brand": "AMD"
+  },
+  {
+    "id": "coreultra9285k",
+    "name": "Intel Core Ultra 9 285K",
+    "url": "https://www.intel.com/content/www/us/en/newsroom/news/core-ultra-200s-series-desktop.html",
+    "brand": "Intel"
+  },
+  {
+    "id": "arcb580",
+    "name": "Intel Arc B580",
+    "url": "https://www.intel.com/content/www/us/en/products/docs/discrete-gpus/arc/desktop/b-series/overview.html",
+    "brand": "Intel"
+  }
 ]
