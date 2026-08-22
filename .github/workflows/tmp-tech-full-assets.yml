@@ -1,0 +1,114 @@
+name: Temporary Tech Full Asset Collector
+
+on:
+  push:
+    branches:
+      - tmp-tech-prototype-20260822
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect official product-page images
+        shell: bash
+        run: |
+          python3 -m pip install --quiet requests beautifulsoup4 pillow
+          python3 - <<'PY'
+          import json, os, re, io, time, hashlib
+          from pathlib import Path
+          from urllib.parse import urljoin, urlparse
+          import requests
+          from bs4 import BeautifulSoup
+          from PIL import Image
+
+          products=json.load(open('tmp-tech/products.json',encoding='utf-8'))
+          out=Path('tech-assets'); out.mkdir(exist_ok=True)
+          sess=requests.Session()
+          sess.headers.update({
+            'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36',
+            'Accept-Language':'en-US,en;q=0.9,ar;q=0.7'
+          })
+          allmeta=[]
+
+          def add_candidate(arr,u,base):
+              if not u: return
+              u=u.strip().replace('\\u0026','&')
+              if u.startswith('//'): u='https:'+u
+              u=urljoin(base,u)
+              if not u.startswith('http'): return
+              # Ignore obvious sprites/icons/logos and data URLs.
+              low=u.lower()
+              if any(x in low for x in ['favicon','sprite','icon-','/icons/','logo.svg','logo.png','spacer','pixel.gif']): return
+              if u not in arr: arr.append(u)
+
+          for idx,p in enumerate(products,1):
+              rec={'id':p['id'],'name':p['name'],'brand':p['brand'],'page_url':p['url'],'status':'pending','images':[]}
+              folder=out/p['id']; folder.mkdir(exist_ok=True)
+              try:
+                  r=sess.get(p['url'],timeout=35,allow_redirects=True)
+                  rec['http_status']=r.status_code; rec['resolved_url']=r.url
+                  r.raise_for_status()
+                  soup=BeautifulSoup(r.text,'html.parser')
+                  cand=[]
+                  for key in [('property','og:image'),('property','og:image:secure_url'),('name','twitter:image'),('name','twitter:image:src')]:
+                      for tag in soup.find_all('meta',attrs={key[0]:key[1]}): add_candidate(cand,tag.get('content'),r.url)
+                  for tag in soup.find_all(['img','source']):
+                      for a in ['src','data-src','data-lazy-src','data-original']:
+                          add_candidate(cand,tag.get(a),r.url)
+                      for a in ['srcset','data-srcset']:
+                          ss=tag.get(a)
+                          if ss:
+                              parts=[x.strip().split()[0] for x in ss.split(',') if x.strip()]
+                              # Prefer the largest candidate (usually last).
+                              for u in reversed(parts): add_candidate(cand,u,r.url)
+                  # Also catch common image URLs embedded in JSON/script payloads.
+                  for m in re.findall(r'https?:\\?/\\?/[^"\'<> ]+?\\.(?:jpg|jpeg|png|webp)(?:\\?[^"\'<> ]*)?',r.text,re.I):
+                      add_candidate(cand,m.replace('\\/','/'),r.url)
+                  rec['candidate_count']=len(cand)
+
+                  seen_hash=set()
+                  for u in cand:
+                      if len(rec['images'])>=6: break
+                      try:
+                          rr=sess.get(u,timeout=30,headers={'Referer':r.url})
+                          if rr.status_code!=200 or len(rr.content)<18000: continue
+                          ctype=rr.headers.get('content-type','').split(';')[0].lower()
+                          if not ctype.startswith('image/'): continue
+                          im=Image.open(io.BytesIO(rr.content)); im.load()
+                          w,h=im.size
+                          if w<420 or h<280: continue
+                          hh=hashlib.sha1(rr.content).hexdigest()
+                          if hh in seen_hash: continue
+                          seen_hash.add(hh)
+                          ext=(im.format or 'PNG').lower()
+                          if ext=='jpeg': ext='jpg'
+                          if ext not in ('jpg','png','webp'): ext='png'
+                          n=len(rec['images'])+1
+                          fname=f'{n:02d}.{ext}'
+                          (folder/fname).write_bytes(rr.content)
+                          rec['images'].append({'filename':f'{p["id"]}/{fname}','url':u,'width':w,'height':h,'bytes':len(rr.content),'content_type':ctype})
+                      except Exception:
+                          continue
+                  rec['status']='downloaded' if len(rec['images'])>=2 else ('partial' if rec['images'] else 'no_image')
+              except Exception as e:
+                  rec['status']='error'; rec['error']=repr(e)
+              allmeta.append(rec)
+              print(f'{idx:02d}/60 {p["id"]}: {rec["status"]} {len(rec["images"])}')
+              time.sleep(.15)
+
+          (out/'metadata.json').write_text(json.dumps(allmeta,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('SUMMARY', {s:sum(x['status']==s for x in allmeta) for s in sorted(set(x['status'] for x in allmeta))})
+          print('PRODUCTS WITH >=2 IMAGES',sum(len(x['images'])>=2 for x in allmeta),'/',len(allmeta))
+          PY
+      - name: Upload collected official assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: tech-full-official-assets
+          path: tech-assets/
+          if-no-files-found: error
+          compression-level: 5
+          retention-days: 1
