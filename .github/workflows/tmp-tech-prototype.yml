@@ -1,0 +1,31 @@
+name: Temporary Tech Prototype Asset Fetch
+
+on:
+  push:
+    branches:
+      - tmp-tech-prototype-20260822
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download official Apple image
+        run: |
+          mkdir -p assets
+          curl -L --fail --retry 3 \
+            'https://www.apple.com/newsroom/images/2025/09/apple-debuts-iphone-17/geo/article/Apple-iPhone-17-hero-250909_inline.jpg.large.jpg' \
+            -o assets/TECH-EASY-001-source.jpg
+          file assets/TECH-EASY-001-source.jpg
+          ls -lh assets/TECH-EASY-001-source.jpg
+      - name: Upload prototype source
+        uses: actions/upload-artifact@v4
+        with:
+          name: tech-prototype-source
+          path: assets/
+          retention-days: 1
