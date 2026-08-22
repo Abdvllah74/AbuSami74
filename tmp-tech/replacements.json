@@ -1,0 +1,14 @@
+[
+{"id":"macmini","name":"ماك ميني Mac mini","brand":"Apple","url":"https://www.apple.com/sa/mac-mini/"},
+{"id":"airtag","name":"ايرتاغ AirTag","brand":"Apple","url":"https://www.apple.com/sa/airtag/"},
+{"id":"homepodmini","name":"هوم بود ميني HomePod mini","brand":"Apple","url":"https://www.apple.com/sa/homepod-mini/"},
+{"id":"applepencilpro","name":"Apple Pencil Pro","brand":"Apple","url":"https://www.apple.com/sa/apple-pencil/"},
+{"id":"pulseexplore","name":"PULSE Explore","brand":"PlayStation","url":"https://www.playstation.com/en-sa/accessories/pulse-explore-wireless-earbuds/"},
+{"id":"ps5camera","name":"كاميرا بلايستيشن 5 HD Camera","brand":"PlayStation","url":"https://www.playstation.com/en-sa/accessories/hd-camera/"},
+{"id":"gproxsuperlight2","name":"Logitech G PRO X SUPERLIGHT 2","brand":"Logitech","url":"https://www.logitechg.com/en-us/products/gaming-mice/pro-x2-superlight-wireless-mouse.910-006628.html"},
+{"id":"g915x","name":"Logitech G915 X LIGHTSPEED","brand":"Logitech","url":"https://www.logitechg.com/en-us/products/gaming-keyboards/g915-x-lightspeed-wireless-gaming-keyboard.html"},
+{"id":"deathadderv3pro","name":"Razer DeathAdder V3 Pro","brand":"Razer","url":"https://www.razer.com/gaming-mice/razer-deathadder-v3-pro"},
+{"id":"blacksharkv2pro","name":"Razer BlackShark V2 Pro","brand":"Razer","url":"https://www.razer.com/gaming-headsets/razer-blackshark-v2-pro"},
+{"id":"rogzephyrusg14","name":"ROG Zephyrus G14","brand":"ASUS","url":"https://rog.asus.com/laptops/rog-zephyrus/rog-zephyrus-g14-2025/"},
+{"id":"rogstrixscopeii96","name":"ROG Strix Scope II 96 Wireless","brand":"ASUS","url":"https://rog.asus.com/keyboards/keyboards/compact/rog-strix-scope-ii-96-wireless/"}
+]
