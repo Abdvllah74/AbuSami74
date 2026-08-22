@@ -1,0 +1,95 @@
+name: Temporary Tech Browser Recovery
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture official product visuals with browser
+        shell: bash
+        run: |
+          python3 -m pip install --quiet selenium pillow
+          python3 - <<'PY'
+          import json, time, re
+          from pathlib import Path
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          from PIL import Image
+
+          ids=set('''watchultra buds3pro pura70ultra djimini4pro osmopocket3 gopro13 wh1000xm6 tabs10ultra homepodmini a56 tabs10fe galaxyring book5pro quest3s djiavata2 djineo osmoaction5pro g915x deathadderv3pro rogzephyrusg14 legiongo xps13 spectrex360 wf1000xm5 note20ultra watch7 t9ssd 990pro ps4pro psclassic xboxonex matepadpro132 freebudspro4 watchfit3 magicv3 magicbookart14 legiongos yogabook9i omentranscend14 rx9070xt coreultra9285k arcb580 joycon2 smartband9pro'''.split())
+          products=[p for p in json.load(open('tmp-tech/products.json',encoding='utf-8')) if p['id'] in ids]
+          out=Path('tech-browser-recovery');out.mkdir(exist_ok=True)
+          meta=[]
+
+          opt=Options()
+          opt.add_argument('--headless=new')
+          opt.add_argument('--no-sandbox')
+          opt.add_argument('--disable-dev-shm-usage')
+          opt.add_argument('--window-size=1440,1000')
+          opt.add_argument('--lang=en-US')
+          opt.add_argument('--disable-blink-features=AutomationControlled')
+          opt.add_experimental_option('excludeSwitches',['enable-automation'])
+          driver=webdriver.Chrome(options=opt)
+          driver.set_page_load_timeout(35)
+
+          js_imgs='''
+          return Array.from(document.images).map((img,i)=>{
+            const r=img.getBoundingClientRect();
+            return {i,src:img.currentSrc||img.src||'',nw:img.naturalWidth,nh:img.naturalHeight,
+                    x:r.x,y:r.y,w:r.width,h:r.height,alt:img.alt||''};
+          }).filter(x=>x.nw>=280&&x.nh>=180&&x.w>=180&&x.h>=120)
+            .sort((a,b)=>(b.w*b.h)-(a.w*a.h)).slice(0,10);
+          '''
+
+          for p in products:
+            f=out/p['id'];f.mkdir(exist_ok=True)
+            rec={**p,'status':'pending','captures':[]}
+            try:
+              driver.get(p['url']);time.sleep(5)
+              rec['resolved_url']=driver.current_url
+              # dismiss common cookie buttons when obvious
+              for text in ['Accept All','Accept all','Allow all','Agree','I agree','Got it','قبول الكل','موافق']:
+                try:
+                  els=driver.find_elements('xpath',f"//*[self::button or self::a][contains(normalize-space(.), '{text}')]")
+                  if els and els[0].is_displayed(): els[0].click();time.sleep(1);break
+                except Exception: pass
+              # page viewport capture as fallback
+              vp=f/'viewport.png';driver.save_screenshot(str(vp));rec['captures'].append({'filename':f'{p["id"]}/viewport.png','kind':'viewport'})
+              imgs=driver.execute_script(js_imgs)
+              used=0
+              for x in imgs:
+                if used>=5:break
+                try:
+                  el=driver.find_elements('tag name','img')[x['i']]
+                  if not el.is_displayed():continue
+                  fn=f'img{used+1:02d}.png';el.screenshot(str(f/fn))
+                  im=Image.open(f/fn)
+                  if im.width<180 or im.height<120: (f/fn).unlink(missing_ok=True);continue
+                  rec['captures'].append({'filename':f'{p["id"]}/{fn}','kind':'img','src':x['src'],'alt':x['alt'],'width':im.width,'height':im.height})
+                  used+=1
+                except Exception: pass
+              rec['status']='captured' if len(rec['captures'])>1 else 'viewport_only'
+            except Exception as e:
+              rec['status']='error';rec['error']=repr(e)
+              try:
+                fn=f/'error_viewport.png';driver.save_screenshot(str(fn));rec['captures'].append({'filename':f'{p["id"]}/error_viewport.png','kind':'error_viewport'})
+              except Exception: pass
+            meta.append(rec);print(p['id'],rec['status'],len(rec['captures']))
+          driver.quit()
+          (out/'metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tech-browser-recovery
+          path: tech-browser-recovery/
+          retention-days: 1
+          compression-level: 5
