@@ -1,0 +1,30 @@
+name: Temporary Tech 17 Pro Asset Fetch
+
+on:
+  push:
+    branches:
+      - tmp-tech-17pro-20260822
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download official Apple iPhone 17 Pro image
+        shell: bash
+        run: |
+          mkdir -p asset
+          curl -L --fail --retry 3 \
+            'https://www.apple.com/newsroom/images/2025/09/apple-unveils-iphone-17-pro-and-iphone-17-pro-max/article/Apple-iPhone-17-Pro-camera-close-up-250909_big.jpg.large.jpg' \
+            -o asset/TECH-EASY-001-source.jpg
+      - name: Upload source
+        uses: actions/upload-artifact@v4
+        with:
+          name: tech-17pro-prototype-source
+          path: asset/
+          retention-days: 1
