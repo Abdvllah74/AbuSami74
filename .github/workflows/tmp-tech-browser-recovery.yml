@@ -1,0 +1,104 @@
+name: Temporary Tech Browser Recovery
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture difficult official product visuals
+        shell: bash
+        run: |
+          python3 -m pip install --quiet selenium pillow
+          python3 - <<'PY'
+          import json,time
+          from pathlib import Path
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          from PIL import Image
+
+          ids=set('''djimini4pro osmopocket3 wh1000xm6 djiavata2 djineo g915x spectrex360 wf1000xm5 matepadpro132 watchfit3 smartband9pro legiongos omentranscend14 surfacelaptop7 rx9070xt switch2procontroller xboxonex arcb580'''.split())
+          products=[p for p in json.load(open('tmp-tech/products.json',encoding='utf-8')) if p['id'] in ids]
+          # Better official URLs for pages whose original URLs are stale or less visual.
+          override={
+            'djimini4pro':'https://www.dji.com/mini-4-pro',
+            'osmopocket3':'https://www.dji.com/osmo-pocket-3',
+            'wh1000xm6':'https://www.sony.com/en-sa/headphones/products/wh-1000xm6',
+            'wf1000xm5':'https://www.sony.com/en-sa/electronics/truly-wireless/wf-1000xm5',
+            'xboxonex':'https://news.xbox.com/en-us/2017/10/05/xbox-one-x-what-it-takes-to-build-a-console/',
+            'rx9070xt':'https://www.amd.com/en/products/graphics/desktops/radeon/9000-series/amd-radeon-rx-9070xt.html',
+            'arcb580':'https://newsroom.intel.com/client-computing/intel-launches-arc-b-series-graphics-cards'
+          }
+          for p in products:
+            p['url']=override.get(p['id'],p['url'])
+          out=Path('tech-browser-recovery-v2');out.mkdir(exist_ok=True)
+          meta=[]
+          opt=Options();
+          for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--window-size=1440,1100','--lang=en-US','--disable-blink-features=AutomationControlled']:
+            opt.add_argument(a)
+          opt.add_experimental_option('excludeSwitches',['enable-automation'])
+          driver=webdriver.Chrome(options=opt);driver.set_page_load_timeout(45)
+
+          def dismiss():
+            for text in ['Accept All','Accept all','Allow all','Agree','I agree','Got it','Accept','قبول الكل','موافق']:
+              try:
+                els=driver.find_elements('xpath',f"//*[self::button or self::a][contains(normalize-space(.), '{text}')]")
+                for e in els[:3]:
+                  if e.is_displayed(): e.click();time.sleep(.6);return
+              except Exception: pass
+
+          for p in products:
+            f=out/p['id'];f.mkdir(exist_ok=True);rec={**p,'captures':[],'status':'pending'}
+            try:
+              driver.get(p['url']);time.sleep(4);dismiss();rec['resolved_url']=driver.current_url
+              # Scroll through page to force lazy-loaded official product art.
+              height=driver.execute_script('return Math.max(document.body.scrollHeight,document.documentElement.scrollHeight)') or 5000
+              positions=[0,.12,.25,.4,.58,.75,.9]
+              seen=set(); idx=0
+              for step,frac in enumerate(positions):
+                driver.execute_script('window.scrollTo(0, arguments[0])',int(max(0,height-1000)*frac));time.sleep(1.5)
+                # Save viewport sections; useful for hero crops if DOM image is canvas/background.
+                vp=f/f'view{step:02d}.png';driver.save_screenshot(str(vp))
+                rec['captures'].append({'filename':f'{p["id"]}/{vp.name}','kind':'viewport','scroll':frac})
+                els=driver.find_elements('tag name','img')
+                candidates=[]
+                for j,e in enumerate(els):
+                  try:
+                    if not e.is_displayed(): continue
+                    size=e.size; src=e.get_attribute('currentSrc') or e.get_attribute('src') or ''
+                    alt=e.get_attribute('alt') or ''
+                    area=float(size.get('width',0))*float(size.get('height',0))
+                    if size.get('width',0)<220 or size.get('height',0)<140 or area<50000: continue
+                    candidates.append((area,j,e,src,alt,size))
+                  except Exception: pass
+                candidates.sort(reverse=True,key=lambda x:x[0])
+                for _,j,e,src,alt,size in candidates[:6]:
+                  key=(src,alt,round(size.get('width',0)) ,round(size.get('height',0)))
+                  if key in seen: continue
+                  seen.add(key)
+                  try:
+                    idx+=1; fn=f'img{idx:02d}.png';e.screenshot(str(f/fn)); im=Image.open(f/fn)
+                    if im.width<220 or im.height<140: (f/fn).unlink(missing_ok=True);continue
+                    rec['captures'].append({'filename':f'{p["id"]}/{fn}','kind':'img','src':src,'alt':alt,'width':im.width,'height':im.height})
+                    if idx>=20: break
+                  except Exception: pass
+                if idx>=20: break
+              rec['status']='captured' if idx else 'viewport_only'
+            except Exception as e:
+              rec['status']='error';rec['error']=repr(e)
+            meta.append(rec);print(p['id'],rec['status'],len(rec['captures']))
+          driver.quit();(out/'metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tech-browser-recovery-v2
+          path: tech-browser-recovery-v2/
+          retention-days: 1
+          compression-level: 5
